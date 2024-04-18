@@ -35,7 +35,9 @@ uses
 
   vcl.Dialogs,
 
-  LibDesign, FMX.Memo.Types, FMX.ScrollBox, FMX.Memo;
+  LibDesign, FMX.Memo.Types, FMX.ScrollBox, FMX.Memo,
+
+  UnDBcontasAPagar;
 
     {$ENDREGION}
 
@@ -122,10 +124,12 @@ type
     RbTipoPagamento: TRadioButton;
     RbTipoVencimento: TRadioButton;
     LblDicasAtalhosPesquisa: TLabel;
+    Bt1: TButton;
 
      {$ENDREGION}
 
     {$REGION 'Declaração das procedures e variáveis da tela'}
+    procedure Bt1Click(Sender: TObject);
     procedure EdtValorDaContaEnter(Sender: TObject);
     procedure EdtValorDaContaKeyDown(Sender: TObject; var Key: Word; var KeyChar:
         Char; Shift: TShiftState);
@@ -143,8 +147,6 @@ type
     procedure FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char; Shift:
         TShiftState);
     procedure FormShow(Sender: TObject);
-    procedure LstBxParcelasAPagarItemClick(const Sender: TCustomListBox; const
-        Item: TListBoxItem);
     procedure SpBtAdicionarParcelaClick(Sender: TObject);
     procedure SpBtCancelarClick(Sender: TObject);
     procedure SpBtDeletarClick(Sender: TObject);
@@ -162,6 +164,9 @@ type
     {$ENDREGION}
 
   end;
+
+var
+   Base: DBPagar;
 
 var
   FrContasAPagar: TFrContasAPagar;
@@ -214,6 +219,11 @@ end;
 {$R *.fmx}
 
 {$REGION 'Ações de Edits'}
+
+procedure TFrContasAPagar.Bt1Click(Sender: TObject);
+begin
+  ShowMessage(Base.PesquisarContas(1, DeInicioConsulta.Date, DeFimConsulta.Date)[0].CodigoConta);
+end;
 
 procedure TFrContasAPagar.EdtValorDaContaEnter(Sender: TObject);
 begin

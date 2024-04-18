@@ -4,31 +4,69 @@ interface
 
 uses
     {$REGION 'Uses do Projeto'}
-  System.SysUtils, System.Classes, System.DateUtils, System.IOUtils, System.Rtti,
 
-  Data.DB, MemDS, DBAccess, Uni, UniProvider, InterBaseUniProvider,
+  System.SysUtils,
+  System.Classes,
+  System.DateUtils,
+  System.IOUtils,
+  System.Rtti,
+  System.Net.HttpClient {Androidapi.Helpers},
+  System.Generics.Collections,
+  System.Types,
+  System.UITypes,
+  System.Variants,
+
+  Data.DB,
+  MemDS,
+  DBAccess,
+  Uni,
+  UniProvider,
+  InterBaseUniProvider,
 
   MySQLUniProvider,
 
-  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
+  IdBaseComponent,
+  IdComponent,
+  IdTCPConnection,
+  IdTCPClient,
+  IdHTTP,
 
-  IBX.IBSQL,                       IBX.IBDatabase,
+  IBX.IBSQL,
+  IBX.IBDatabase,
 
-  FireDAC.Stan.Intf,               FireDAC.Stan.Option,
-  FireDAC.Stan.Error,              FireDAC.UI.Intf,
-  FireDAC.Stan.Pool,               FireDAC.Stan.Async,
-  FireDAC.Phys.SQLiteDef,          FireDAC.Stan.ExprFuncs,
-  FireDAC.Phys.SQLiteWrapper.Stat, FireDAC.FMXUI.Wait,
-  FireDAC.Comp.Client,             FireDAC.Stan.Param,
-  FireDAC.DApt.Intf,               FireDAC.DApt,
-  FireDAC.Phys.FBDef,              FireDAC.Comp.DataSet,
-  FireDAC.Phys.Intf,               FireDAC.Stan.Def,
-  FireDAC.Phys,                    FireDAC.Phys.SQLite,
-  FireDAC.DatS,                    FireDAC.Phys.FB,
+  FireDAC.Stan.Intf,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Error,
+  FireDAC.UI.Intf,
+  FireDAC.Stan.Pool,
+  FireDAC.Stan.Async,
+  FireDAC.Phys.SQLiteDef,
+  FireDAC.Stan.ExprFuncs,
+  FireDAC.Phys.SQLiteWrapper.Stat,
+  FireDAC.FMXUI.Wait,
+  FireDAC.Comp.Client,
+  FireDAC.Stan.Param,
+  FireDAC.DApt.Intf,
+  FireDAC.DApt,
+  FireDAC.Phys.FBDef,
+  FireDAC.Comp.DataSet,
+  FireDAC.Phys.Intf,
+  FireDAC.Stan.Def,
+  FireDAC.Phys,
+  FireDAC.Phys.SQLite,
+  FireDAC.DatS,
+  FireDAC.Phys.FB,
 
-  System.Net.HttpClient {Androidapi.Helpers};
+  FMX.Types,
+  FMX.Controls,
+  FMX.Forms,
+  FMX.Graphics,
+  FMX.Dialogs,
+  FMX.StdCtrls;
+
     {$ENDREGION}
 type
+
   TDm = class(TDataModule)
 
     {$REGION 'Inicialização dos Componentes'}
@@ -119,7 +157,7 @@ type
 
     function fimDeArquivo: Boolean;
 
-    procedure percorreQuery(const Acao: TProc);
+    procedure percorreQuery(Acao: Tproc);
   end;
   {$ENDREGION}
 
@@ -353,7 +391,7 @@ begin
 end;
 
 
-procedure TFB.percorreQuery(const Acao: TProc);
+procedure TFB.percorreQuery(Acao: Tproc);
 begin
 
   while QryFb.Eof = False do

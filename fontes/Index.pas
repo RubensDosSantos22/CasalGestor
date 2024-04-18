@@ -3,9 +3,25 @@ unit Index;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
-  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Ani, LibDesign, FMX.TabControl, UnContasAPagar,
+  System.SysUtils,
+  System.Types,
+  System.UITypes,
+  System.Classes,
+  System.Variants,
+
+  FMX.Types,
+  FMX.Controls,
+  FMX.Forms,
+  FMX.Graphics,
+  FMX.Dialogs,
+  FMX.Objects,
+  FMX.Controls.Presentation,
+  FMX.StdCtrls,
+  FMX.Ani,
+  FMX.TabControl,
+
+  LibDesign,
+  UnContasAPagar,
   UnContasAReceber;
 
 type
@@ -40,9 +56,6 @@ type
     anInvisibleLblBtConversoes: TFloatAnimation;
     anHoverBtConversoes: TFloatAnimation;
     anUnhoverBtConversoes: TFloatAnimation;
-
-  {$ENDREGION}
-
     procedure FormCreate(Sender: TObject);
     procedure ImgBtCloseApplicationMouseLeave(Sender: TObject);
     procedure ImgBtCloseApplicationMouseEnter(Sender: TObject);
