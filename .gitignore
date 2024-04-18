@@ -1,0 +1,41 @@
+
+# Arquivos e binários gerados pelo Delphi
+
+*.dll
+*.bpl
+*.bpi
+*.dcp
+*.so
+*.drc
+*.map
+*.dres
+*.rsm
+*.tds
+*.a
+*.o
+*.ocx
+
+# Arquivos autogerados pelo Delphi
+*.cfg
+*.hpp
+*Resource.rc
+
+# Arquivos locais do Delphi
+*.local
+*.identcache
+*.projdata
+*.tvsconfig
+*.dsk
+
+# Pastas e arquivos específicos
+__history/
+__recovery/
+*.~*
+
+# Castalia statistics file (since XE7 Castalia is distributed with Delphi)
+*.stat
+
+# Boss dependency manager vendor folder
+modules/
+
+# End
