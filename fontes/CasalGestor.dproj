@@ -190,7 +190,7 @@
         <DCCReference Include="Index.pas">
             <Form>FrIndex</Form>
         </DCCReference>
-        <DCCReference Include="lib\project\LibDesign.pas"/>
+        <DCCReference Include="lib\project\LibControlGrids.pas"/>
         <DCCReference Include="UnContasAReceber.pas">
             <Form>FrContasAReceber</Form>
             <FormType>fmx</FormType>
@@ -199,7 +199,7 @@
             <Form>FrContasAPagar</Form>
             <FormType>fmx</FormType>
         </DCCReference>
-        <DCCReference Include="lib\project\LibAcoes.pas"/>
+        <DCCReference Include="lib\project\LibTools.pas"/>
         <DCCReference Include="database\DmMaster.pas">
             <Form>Dm</Form>
             <FormType>dfm</FormType>
@@ -217,7 +217,6 @@
         <DCCReference Include="controllers\UnDBcontasAPagar.pas"/>
         <DCCReference Include="controllers\UnDBcontasAReceber.pas"/>
         <DCCReference Include="frames\controllers\UnControleErros.pas"/>
-        <DCCReference Include="lib\project\LibDatabase.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

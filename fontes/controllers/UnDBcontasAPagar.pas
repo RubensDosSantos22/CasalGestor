@@ -63,13 +63,29 @@ uses
   FMX.Forms,
   FMX.Graphics,
   FMX.Dialogs,
+  FMX.Ani,
+  FMX.Objects,
+  FMX.Controls.Presentation,
   FMX.StdCtrls,
+  FMX.ListView.Types,
+  FMX.ListView.Appearances,
+  FMX.ListView.Adapters.Base,
+  FMX.ListBox,
+  FMX.DateTimeCtrls,
+  FMX.Edit,
+  FMX.ListView,
+  FMX.TabControl,
+  FMX.Layouts,
+  FMX.Dialogs.Win,
 
    DmMaster;
     {$ENDREGION}
 
 type
-   TRegistro = class
+
+    {$REGION 'Declarações do controlador'}
+
+   TConta = class
      private
         TId: Integer;
         TIdTabela: integer;
@@ -94,42 +110,71 @@ type
         property Updated                     : TDateTime    read TUpdated      write TUpdated;
    end;
 
+   TParcela = class
+     private
+        TId: Integer;
+        TIdTabela: integer;
+        TIdConta: integer;
+        TValor: Double;
+        TPagamento: TDate;
+        TObservacoes: string;
+     public
+        property Id                          : Integer      read TId           write TId;
+        property IdTabela                    : Integer      read TIdTabela     write TIdTabela;
+        property Conta                       : Integer      read TIdConta      write TIdConta;
+        property Valor                       : Double       read TValor        write TValor;
+        property Pagamento                   : TDate        read TPagamento    write TPagamento;
+        property Observacoes                 : string       read TObservacoes  write TObservacoes;
+   end;
+
+   comboItem = class(TListBoxItem)
+      private
+        iid: integer;
+        itext: string;
+      public
+        property id: integer read iid write iid;
+        property Text: string read itext write itext;
+      end;
 
     DBPagar = class
 
       //Salvamento
-      procedure SalvaConta(conta: string; valor: Double; Pagamento, Vencimento: TDate; Despesa: Integer; Obs: string);
-      procedure SalvaParcela(IdConta: integer; valor: Double; Pagamento: TDate; Obs: string);
+      procedure SalvaConta(conta: string; valor: Double; Pagamento, Vencimento: TDate; Despesa: Integer; Obs: string; id: integer = 0);
+      procedure SalvaParcela(IdConta: integer; valor: Double; Pagamento: TDate; Obs: string; id: integer = 0);
 
       //Exclusão
       procedure DeletaConta(idConta: integer);
       procedure DeletaParcela(IdParcela: integer);
 
       //Consulta
-      function PesquisarContas(TipoData: Integer; Inicio, Fim: TDate): TList<TRegistro>;
-      function PesquisarParcelas(IdConta: integer): TList<TRegistro>;
+      function PesquisarContas(TipoData: Integer; Inicio, Fim: TDate): TList<TConta>;
+      function PesquisarParcelas(IdConta: integer): TList<TParcela>;
 
-      //Visualização
-      function DadosDaConta(IdConta: integer): TList<TRegistro>;
-      function DadosDaPArcela(IdConta: integer): TList<TRegistro>;
+      procedure PreencheContas(Cbx: TComboBox);
 
+    private
+      //Salvamento dos dados
+      procedure salvaDadosConta(tbId: Integer; tbConta: string; tbValor: Double; tbPagamento, tbVencimento: TDate; tbDespesa: Integer; tbObservacoes: string; tbCreated, tbUpdated: TDateTime);
+      procedure salvaDadosParcela(tbId, tbConta: integer; tbValor: Double; tbPagamento: TDate; tbObservacoes: string);
     end;
 
-  var
-     nomeConta, Observacoes: string;
-     Cons: Query;
-     i: Integer;
-     BaseResultadoConta: TList<TRegistro>;
+  {$ENDREGION}
+
+var
+   BaseResultadoConta                     : TList<TConta>;
+   BaseResultadoParcela                   : TList<TParcela>;
+   Cons: Query;
+   i: Integer;
+   ic: comboItem;
 
 implementation
 
-uses
-   UnContasAPagar;
+    {$REGION 'Procedimentos privados'}
 
-procedure salvaDadosConta(tbId: Integer; tbConta: string; tbValor: Double; tbPagamento, tbVencimento: TDate; tbDespesa: Integer; tbObservacoes: string; tbCreated, tbUpdated: TDateTime);
+procedure DBPagar.salvaDadosConta(tbId: Integer; tbConta: string; tbValor: Double; tbPagamento, tbVencimento: TDate; tbDespesa: Integer; tbObservacoes: string; tbCreated, tbUpdated: TDateTime);
 begin
 
-  BaseResultadoConta.Add(TRegistro.Create);
+  BaseResultadoConta.Add(TConta.Create);
 
   with BaseResultadoConta[i] do
     begin
@@ -148,20 +193,80 @@ begin
     i:= i + 1;
 end;
 
-{ DBPagar }
+procedure DBPagar.salvaDadosParcela(tbId, tbConta: integer; tbValor: Double; tbPagamento: TDate; tbObservacoes: string);
+begin
+
+  BaseResultadoParcela.Add(TParcela.Create);
+
+  with BaseResultadoParcela[i] do
+    begin
+      id                  := i;
+      IdTabela            := tbId;
+      Conta               := tbConta;
+      Valor               := tbValor;
+      Pagamento           := tbPagamento;
+      Observacoes         := tbObservacoes;
+    end;
+
+    i:= i + 1;
+end;
+
+{$ENDREGION}
+
+    {$REGION 'Procedimentos Públicos'}
 
 // Salvamento ------------------------------------------------------------------
 
 procedure DBPagar.SalvaConta(conta: string; valor: Double; Pagamento,
-  Vencimento: TDate; Despesa: Integer; Obs: string);
+  Vencimento: TDate; Despesa: Integer; Obs: string; id: integer = 0);
+var
+   pagto, vencto: string;
 begin
-  //pass
+
+  pagto:= DateToStr(Pagamento);
+  pagto:= Copy(pagto, 4, 2) + '/' + Copy(pagto, 0, 2) + '/' + Copy(pagto, 7, 4);
+
+  vencto:= DateToStr(Vencimento);
+  vencto:= Copy(vencto, 4, 2) + '/' + Copy(vencto, 0, 2) + '/' + Copy(vencto, 7, 4);
+
+  with Cons.FB do
+    begin
+
+      command_fields:= ['CODIGO_CONTA', 'VALOR_PAGAMENTO', 'DATA_PAGAMENTO', 'DATA_VENCIMENTO', 'DESPESA', 'OBSERVACOES'];
+
+    if id = 0 then
+      begin
+        insert('CT_PAGAR', command_fields);
+      end
+    else
+      begin
+        update('CT_PAGAR', command_fields, id);
+      end;
+
+      parameters([conta, valor, pagto, vencto, Despesa, obs], command_fields);
+    end;
 end;
 
 procedure DBPagar.SalvaParcela(IdConta: integer; valor: Double;
-  Pagamento: TDate; Obs: string);
+  Pagamento: TDate; Obs: string; id: integer = 0);
 begin
-  //pass
+
+  with Cons.FB do
+    begin
+
+      command_fields:= ['CONTA', 'VALOR', 'DATA_PAGAMENTO', 'OBSERVACOES'];
+
+    if id = 0 then
+      begin
+        insert('PARCELA_CT_PAGAR', command_fields);
+      end
+    else
+      begin
+        update('PARCELA_CT_PAGAR', command_fields, id);
+      end;
+
+      parameters([Idconta, valor, Pagamento, obs], command_fields);
+    end;
 end;
 
 // -----------------------------------------------------------------------------
@@ -170,22 +275,27 @@ end;
 
 procedure DBPagar.DeletaConta(idConta: integer);
 begin
-  //pass
+  Cons.FB.delete('CT_PAGAR', '', idConta);
 end;
 
-procedure DBPagar.DeletaParcela(IdParcela: integer);
+procedure DBPagar.DeletaParcela(idParcela: integer);
 begin
-  //pass
+  Cons.FB.delete('PARCELA_CT_PAGAR', '', idParcela);
 end;
 
 // -----------------------------------------------------------------------------
 
 // Consulta --------------------------------------------------------------------
 function DBPagar.PesquisarContas(TipoData: Integer; Inicio,
-  Fim: TDate): TList<TRegistro>;
+  Fim: TDate): TList<TConta>;
 var
    Campo_Data: string;
+   dtInicial, dtFinal: string;
 begin
+
+  if BaseResultadoConta <> nil then
+    BaseResultadoConta.Destroy;
+
 
   i:= 0;
 
@@ -194,40 +304,84 @@ begin
   else
     Campo_Data:= 'DATA_PAGAMENTO';
 
+  BaseResultadoConta:= TList<TConta>.Create;
+
   with Cons.FB do
     begin
+      dtInicial:= DateToStr(Inicio);
+      dtInicial:= Copy(dtInicial, 4, 2) + '/' + Copy(dtInicial, 0, 2) + '/' + Copy(dtInicial, 7, 4);
+
+      dtFinal:= DateToStr(Fim);
+      dtFinal:= Copy(dtFinal, 4, 2) + '/' + Copy(dtFinal, 0, 2) + '/' + Copy(dtFinal, 7, 4);
+
       setQuery(1);
       select('CT_PAGAR','','',Campo_Data + ' BETWEEN :INICIO AND :FIM ', Campo_Data);
-      parameters([Inicio, Fim], ['INICIO', 'FIM']);
+      parameters([dtInicial, dtFinal], ['INICIO', 'FIM']);
 
-    while QryFb.Eof = False do
+    if QryFb.Eof = False then
       begin
-        salvaDadosConta(vlrField('ID'), vlrField('CODIGO_CONTA'), vlrField('VALOR_PAGAMENTO'), vlrField('DATA_PAGAMENTO'), vlrField('DATA_VENCIMENTO'), vlrField('DESPESA'), vlrField('OBSERVACOES'), vlrField('CREATED_AT'), vlrField('UPDATED_AT'));
-        QryFb.Next;
+
+      while QryFb.Eof = False do
+        begin
+          salvaDadosConta(vlrField('ID'), vlrField('CODIGO_CONTA'), vlrField('VALOR_PAGAMENTO'), vlrField('DATA_PAGAMENTO'), vlrField('DATA_VENCIMENTO'), vlrField('DESPESA'), vlrField('OBSERVACOES'), vlrField('CREATED_AT'), vlrField('UPDATED_AT'));
+          QryFb.Next;
+        end;
+      end
+    else
+      begin
+        ShowMessage('NÃO HÁ LANÇAMENTOS PARA O PERÍODO SELECIONADO');
       end;
     end;
 
   Result:= BaseResultadoConta;
 end;
 
-function DBPagar.PesquisarParcelas(IdConta: integer): TList<TRegistro>;
+function DBPagar.PesquisarParcelas(IdConta: integer): TList<TParcela>;
 begin
-  //pass
+  i:= 0;
+
+  BaseResultadoParcela:= TList<TParcela>.Create;
+
+  with Cons.FB do
+    begin
+
+      setQuery(2);
+      select('CT_PAGAR','','',' ID = :ID ', 'ID');
+      parameters([IdConta], ['ID']);
+
+    while QryFb.Eof = False do
+      begin
+        salvaDadosParcela(vlrField('ID'), vlrField('CONTA'), vlrField('VALOR'), vlrField('DATA_PAGAMENTO'), vlrField('OBSERVACOES'));
+        QryFb.Next;
+      end;
+    end;
+
+  Result:= BaseResultadoParcela;
 end;
 // -----------------------------------------------------------------------------
 
-
-// Visualização ----------------------------------------------------------------
-function DBPagar.DadosDaConta(IdConta: integer): TList<TRegistro>;
+procedure DBPagar.PreencheContas(Cbx: TComboBox);
+var
+  index: integer;
 begin
-  //pass
+
+  with Cons.FB do
+    begin
+
+      setQuery(3);
+      select('TP_DESPESA','','','', 'ID');
+
+    while QryFb.Eof = False do
+      begin
+
+        index:= vlrField('ID');
+        Cbx.Items.AddObject(vlrField('NOME'), TObject(index));
+        QryFb.Next;
+      end;
+    end;
 end;
 
-function DBPagar.DadosDaPArcela(IdConta: integer): TList<TRegistro>;
-begin
-  //pass
-end;
-// -----------------------------------------------------------------------------
 
+{$ENDREGION}
 
 end.

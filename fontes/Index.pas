@@ -20,7 +20,8 @@ uses
   FMX.Ani,
   FMX.TabControl,
 
-  LibDesign,
+  LibControlGrids,
+  LibTools,
   UnContasAPagar,
   UnContasAReceber;
 
@@ -57,6 +58,8 @@ type
     anHoverBtConversoes: TFloatAnimation;
     anUnhoverBtConversoes: TFloatAnimation;
     procedure FormCreate(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; var KeyChar: Char; Shift:
+        TShiftState);
     procedure ImgBtCloseApplicationMouseLeave(Sender: TObject);
     procedure ImgBtCloseApplicationMouseEnter(Sender: TObject);
     procedure RctBtCadastrosMouseEnter(Sender: TObject);
@@ -68,7 +71,7 @@ type
     procedure ImgBtCloseApplicationClick(Sender: TObject);
     procedure RctPnlFormClick(Sender: TObject);
   private
-    Anim1: animNoTime;
+
   public
     { Public declarations }
   end;
@@ -86,7 +89,7 @@ implementation
 procedure TFrIndex.RctBtCadastrosClick(Sender: TObject);
 begin
   FrContasAPagar:= TFrContasAPagar.Create(Application);
-  ActualScreen:= FrContasAPagar;
+  //ActualScreen:= FrContasAPagar;
   FrContasAPagar.Show;
 end;
 
@@ -107,7 +110,7 @@ end;
 procedure TFrIndex.RctBtConversoesClick(Sender: TObject);
 begin
   FrContasAReceber:= TFrContasAReceber.Create(Application);
-  ActualScreen:= FrContasAReceber;
+//  ActualScreen:= FrContasAReceber;
   FrContasAReceber.Show;
 end;
 
@@ -146,8 +149,16 @@ end;
 
 procedure TFrIndex.FormCreate(Sender: TObject);
 begin
-  ActualScreen:= FrIndex;
-  Anim1.abreMenu;
+//  ActualScreen:= FrIndex;
+end;
+
+procedure TFrIndex.FormKeyDown(Sender: TObject; var Key: Word; var KeyChar:
+    Char; Shift: TShiftState);
+begin
+  if Key = 35 then //End - Encerrar Aplicação
+    begin
+      Application.Terminate;
+    end;
 end;
 
 procedure TFrIndex.RctPnlFormClick(Sender: TObject);

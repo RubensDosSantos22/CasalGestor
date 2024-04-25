@@ -24,14 +24,16 @@ type
     LblBtParcelas: TLabel;
     LblTituloErro: TLabel;
     ImgAviso: TImage;
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char; Shift:
         TShiftState);
     procedure SpBtAcao1Click(Sender: TObject);
+    procedure SpBtAcao2Click(Sender: TObject);
     procedure SpBtFecharErroClick(Sender: TObject);
   private
     { Private declarations }
   public
-    { Public declarations }
+    OpcaoSelecionada: Boolean;
   end;
 
 var
@@ -41,22 +43,35 @@ implementation
 
 {$R *.fmx}
 
+procedure TFrmErroSistema.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  //FreeAndNil(FrmErroSistema);
+end;
+
 procedure TFrmErroSistema.FormKeyUp(Sender: TObject; var Key: Word; var
     KeyChar: Char; Shift: TShiftState);
 begin
   if Key = 13 then
     begin
-      FrmErroSistema.Close;
+      SpBtAcao1.OnClick(Sender);
     end;
 end;
 
 procedure TFrmErroSistema.SpBtAcao1Click(Sender: TObject);
 begin
+  OpcaoSelecionada:= True;
+  FrmErroSistema.Close;
+end;
+
+procedure TFrmErroSistema.SpBtAcao2Click(Sender: TObject);
+begin
+  OpcaoSelecionada:= False;
   FrmErroSistema.Close;
 end;
 
 procedure TFrmErroSistema.SpBtFecharErroClick(Sender: TObject);
 begin
+  OpcaoSelecionada:= False;
   FrmErroSistema.Close;
 end;
 

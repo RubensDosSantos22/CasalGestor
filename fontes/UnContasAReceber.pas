@@ -35,7 +35,9 @@ uses
 
   vcl.Dialogs,
 
-  LibDesign;
+  LibControlGrids, FMX.Memo.Types, FMX.ScrollBox, FMX.Memo,
+
+  UnDBcontasAReceber, UnFrmItensContas, UnControleErros;
 
     {$ENDREGION}
 
@@ -108,7 +110,6 @@ type
     LblDicasAtalhosLancamentos: TLabel;
     TbItConsulta: TTabItem;
     RctConsulta: TRectangle;
-    LvResultadoPesquisa: TListView;
     RctFiltrosConsulta: TRectangle;
     LblTTAPagar: TLabel;
     LblTTPagas: TLabel;
@@ -120,12 +121,12 @@ type
     RbTipoPagamento: TRadioButton;
     RbTipoVencimento: TRadioButton;
     LblDicasAtalhosPesquisa: TLabel;
+    LstBxConsulta: TListBox;
 
     {$ENDREGION}
 
     {$REGION 'Declaração das procedures e variáveis da tela'}
 
-    procedure EdtValorDaContaEnter(Sender: TObject);
     procedure EdtValorDaContaKeyDown(Sender: TObject; var Key: Word; var KeyChar:
         Char; Shift: TShiftState);
     procedure EdtValorDaContaKeyUp(Sender: TObject; var Key: Word; var KeyChar:
@@ -147,17 +148,31 @@ type
     procedure SpBtDeletarClick(Sender: TObject);
     procedure SpBtEditarClick(Sender: TObject);
     procedure SpBtNovoClick(Sender: TObject);
+    procedure DeFimConsultaExit(Sender: TObject);
+    procedure CbTiposDeContasChange(Sender: TObject);
+    procedure DeInicioConsultaExit(Sender: TObject);
+    procedure EdtValorDaContaExit(Sender: TObject);
+    procedure EdtValorParcelaExit(Sender: TObject);
+    procedure RbTipoPagamentoChange(Sender: TObject);
+    procedure RbTipoVencimentoChange(Sender: TObject);
+
   private
-    Anim1: animNoTime;
     Parcela: ItemGrids;
     Botoes: Navbar;
+    TipodatConsulta, chaveRegistroEdicao: Integer;
   public
     Lanca_Parcela, Permite_Alteracao: Boolean;
     Valor: string;
+     NovoOuEdita: string;
 
     {$ENDREGION}
 
   end;
+
+var
+   Base: DBReceber;
+   E: Erro;
+   A: Aviso;
 
 var
   FrContasAReceber: TFrContasAReceber;
@@ -173,6 +188,7 @@ uses
 
 procedure Limparcampos;
 begin
+
   with FrContasAReceber do
     begin
       CbTiposDeContas.ItemIndex:= -1;
@@ -205,9 +221,123 @@ begin
 
 end;
 
+procedure ConsultarContas;
+var
+   i: Integer;
+   Pagas, APagar: Double;
+begin
+
+  with FrContasAReceber do
+    begin
+      Pagas:= 0;
+      APagar:= 0;
+      LstBxConsulta.Clear;
+
+    if RbTipoVencimento.IsChecked then
+      TipodatConsulta:= 0
+    else
+      TipodatConsulta:= 1;
+
+      Base.PesquisarContas(TipodatConsulta, DeInicioConsulta.Date, DeFimConsulta.Date);
+
+    for i := 0 to BaseResultadoConta.Count - 1 do
+      begin
+        Parcela.addConta(
+                         LstBxConsulta,
+                         BaseResultadoConta[i].CodigoConta,
+                         FormatFloat('###,###,##0.00', BaseResultadoConta[i].Valor),
+                         DateToStr(BaseResultadoConta[i].Vencimento),
+                         DateToStr(BaseResultadoConta[i].Recebimento),
+                         BaseResultadoConta[i].Id);
+
+      if DateToStr(BaseResultadoConta[i].Recebimento) <> '01/01/2000' then
+        Pagas:= Pagas + BaseResultadoConta[i].Valor
+      else
+        APagar:= APagar + BaseResultadoConta[i].Valor;
+      end;
+
+      LblTTAPagar.Text:= 'A PAGAR: R$ ' + FormatFloat('###,###,##0.00', APagar);
+      LblTTPagas.Text:= 'PAGO: R$ ' + FormatFloat('###,###,##0.00',Pagas);
+    end;
+end;
+
+procedure AbreConsulta;
+begin
+
+  with FrContasAReceber do
+    begin
+      DeInicioConsulta.Date:= Now - 365;
+      DeFimConsulta.Date:= Now;
+      ConsultarContas;
+    end;
+end;
+
 {$ENDREGION}
 
 {$R *.fmx}
+
+
+{$REGION 'Ações de Edits'}
+
+procedure TFrContasAReceber.CbTiposDeContasChange(Sender: TObject);
+begin
+  EdtNomeConta.Text:= '';
+end;
+
+procedure TFrContasAReceber.DeFimConsultaExit(Sender: TObject);
+begin
+  ConsultarContas;
+end;
+
+procedure TFrContasAReceber.DeInicioConsultaExit(Sender: TObject);
+begin
+  ConsultarContas;
+end;
+
+procedure TFrContasAReceber.EdtValorDaContaExit(Sender: TObject);
+begin
+  if (EdtValorDaConta.Text = '') then
+     EdtValorDaConta.Text:= '0,00';
+end;
+
+
+procedure TFrContasAReceber.EdtValorDaContaKeyDown(Sender: TObject; var Key:
+    Word; var KeyChar: Char; Shift: TShiftState);
+begin
+  EdtValorDaConta.Text:= onlyNumber(EdtValorDaConta.Text);
+end;
+
+procedure TFrContasAReceber.EdtValorDaContaKeyUp(Sender: TObject; var Key: Word;
+    var KeyChar: Char; Shift: TShiftState);
+begin
+  EdtValorDaConta.Text:= onlyNumber(EdtValorDaConta.Text);
+end;
+
+procedure TFrContasAReceber.EdtValorParcelaEnter(Sender: TObject);
+begin
+  if (StrToFloat(EdtValorParcela.Text) = 0) then
+    EdtValorParcela.Text:= '';
+end;
+
+procedure TFrContasAReceber.EdtValorParcelaExit(Sender: TObject);
+begin
+  if (EdtValorParcela.Text = '') then
+    EdtValorParcela.Text:= '0,00';
+end;
+
+procedure TFrContasAReceber.EdtValorParcelaKeyDown(Sender: TObject; var Key:
+    Word; var KeyChar: Char; Shift: TShiftState);
+begin
+  EdtValorParcela.Text:= onlyNumber(EdtValorParcela.Text);
+end;
+
+procedure TFrContasAReceber.EdtValorParcelaKeyUp(Sender: TObject; var Key: Word;
+    var KeyChar: Char; Shift: TShiftState);
+begin
+  EdtValorParcela.Text:= onlyNumber(EdtValorParcela.Text);
+end;
+
+{$ENDREGION}
 
 {$REGION 'Ações dos Atalhos'}
 
@@ -250,47 +380,6 @@ end;
 
 {$ENDREGION}
 
-{$REGION 'Ações dos Edits'}
-
-procedure TFrContasAReceber.EdtValorDaContaEnter(Sender: TObject);
-begin
-  if (StrToFloat(EdtValorDaConta.Text) = 0) then
-     EdtValorDaConta.Text:= '';
-end;
-
-procedure TFrContasAReceber.EdtValorDaContaKeyDown(Sender: TObject; var Key:
-    Word; var KeyChar: Char; Shift: TShiftState);
-begin
-  EdtValorDaConta.Text:= onlyNumber(EdtValorDaConta.Text);
-end;
-
-procedure TFrContasAReceber.EdtValorDaContaKeyUp(Sender: TObject; var Key:
-    Word; var KeyChar: Char; Shift: TShiftState);
-begin
-  EdtValorDaConta.Text:= onlyNumber(EdtValorDaConta.Text);
-end;
-
-
-procedure TFrContasAReceber.EdtValorParcelaEnter(Sender: TObject);
-begin
-  if (StrToFloat(EdtValorParcela.Text) = 0) then
-    EdtValorParcela.Text:= '';
-end;
-
-procedure TFrContasAReceber.EdtValorParcelaKeyDown(Sender: TObject; var Key:
-    Word; var KeyChar: Char; Shift: TShiftState);
-begin
-  EdtValorParcela.Text:= onlyNumber(EdtValorParcela.Text);
-end;
-
-procedure TFrContasAReceber.EdtValorParcelaKeyUp(Sender: TObject; var Key:
-    Word; var KeyChar: Char; Shift: TShiftState);
-begin
-  EdtValorParcela.Text:= onlyNumber(EdtValorParcela.Text);
-end;
-
-{$ENDREGION}
-
 {$REGION 'Ações do Formulário'}
 
 procedure TFrContasAReceber.FormShow(Sender: TObject);
@@ -299,10 +388,12 @@ begin
   GpParcelasReceber.Enabled                := False;
   Permite_Alteracao                        := True;
   TbWork.TabIndex                          := 1;
+  Limparcampos;
+  AbreConsulta;
+  Base.PreencheContas(CbTiposDeContas);
 end;
 
-procedure TFrContasAReceber.FormClose(Sender: TObject; var Action:
-    TCloseAction);
+procedure TFrContasAReceber.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Botoes.Cancelar;
 end;
@@ -311,6 +402,7 @@ end;
 {$ENDREGION}
 
 {$REGION 'Ações dos Botões'}
+
 procedure TFrContasAReceber.ImgBtCloseApplicationClick(Sender: TObject);
 begin
   Botoes.Cancelar;
@@ -327,9 +419,14 @@ begin
   anUnhoverBtClose.Start;
 end;
 
-procedure TFrContasAReceber.SpBtCancelarClick(Sender: TObject);
+procedure TFrContasAReceber.RbTipoPagamentoChange(Sender: TObject);
 begin
-  Botoes.Cancelar;
+  ConsultarContas;
+end;
+
+procedure TFrContasAReceber.RbTipoVencimentoChange(Sender: TObject);
+begin
+  ConsultarContas;
 end;
 
 procedure TFrContasAReceber.SpBtAdicionarParcelaClick(Sender: TObject);
@@ -337,9 +434,14 @@ begin
   Botoes.Salvar('P');
 end;
 
+procedure TFrContasAReceber.SpBtCancelarClick(Sender: TObject);
+begin
+  Botoes.Cancelar;
+end;
+
 procedure TFrContasAReceber.SpBtDeletarClick(Sender: TObject);
 begin
-   Botoes.Excluir;
+  Botoes.Excluir;
 end;
 
 procedure TFrContasAReceber.SpBtEditarClick(Sender: TObject);
@@ -370,6 +472,7 @@ begin
 
       RctWorkSpace.Enabled        := True;
       GpParcelasReceber.Enabled   := True;
+      NovoOuEdita:= 'N';
 
       TbWork.TabIndex             := 0;
       Limparcampos;
@@ -380,6 +483,7 @@ procedure navBar.Cancelar;
 begin
   with FrContasAReceber do
     begin
+      NovoOuEdita:= '';
       Permite_Alteracao                   := True;
       Lanca_Parcela                       := False;
 
@@ -392,14 +496,18 @@ begin
       GpParcelasReceber.Enabled           := False;
 
       TbWork.TabIndex                     := 1;
+      ConsultarContas;
       Limparcampos;
     end;
 end;
 
 procedure navBar.Editar;
+var
+   chave: Integer;
 begin
   with FrContasAReceber do
     begin
+      NovoOuEdita:= 'E';
       Permite_Alteracao                   := False;
       Lanca_Parcela                       := True;
 
@@ -410,6 +518,16 @@ begin
 
       RctWorkSpace.Enabled                := True;
       GpParcelasReceber.Enabled           := True;
+
+      chave := itemConsultaPagar;
+
+      CbTiposDeContas.ItemIndex:= -1;
+      EdtValorDaConta.Text:= FormatFloat('###,###,##0.00', BaseResultadoConta[chave].Valor);
+      DePagamento.Date:= BaseResultadoConta[chave].Recebimento;
+      DeVencimento.Date:= BaseResultadoConta[chave].Vencimento;
+      EdtNomeConta.Text:= BaseResultadoConta[chave].CodigoConta;
+      chaveRegistroEdicao:= BaseResultadoConta[chave].IdTabela;
+      LstBxParcelasAPagar.Clear;
 
       TbWork.TabIndex                     := 0;
     end;
@@ -423,19 +541,22 @@ begin
     if Permite_Alteracao = True then
       begin
 
-      if messagedlg('Confirma Exclusão?' ,mtConfirmation,[mbYes,MbNo],0) = mrYes then
+      if A.mensagemAlerta('', 'Confirma Exclusão?', 1) = True then
         begin
+          LstBxConsulta.Clear;
+          Base.DeletaConta(BaseResultadoConta[itemConsultaPagar].IdTabela);
           Cancelar;
         end
       else
         begin
-          ShowMessage('Operação Cancelada');
+          A.mensagemAlerta('', 'Operação Cancelada', 0);
         end;
       end
     else
       begin
         Cancelar;
-        ShowMessage('Não é possível chamar a operação de exclusão no momento. Sua operação atual foi cancelada');
+        E.mensagemErro('Impossível concluir operação',
+                       'Não é possível chamar a operação de exclusão no momento. Sua operação atual foi cancelada', 0);
       end;
     end;
 end;
@@ -448,8 +569,9 @@ begin
     if Permite_Alteracao = False then
       begin
 
-      if messagedlg('Certeza? Sua operação atual será cancelada' ,mtConfirmation,[mbYes,MbNo],0) = mrYes then
+      if A.mensagemAlerta('', 'Certeza? Sua operação atual será cancelada', 1) = True then
         begin
+          LstBxConsulta.Clear;
           Cancelar;
         end
       else
@@ -481,26 +603,13 @@ begin
 
           if StrToFloat(EdtValorParcela.Text) = 0 then
             begin
-              FrmErroSistema:= TFrmErroSistema.Create(Application);
-              FrmErroSistema.LblTituloErro.Text:= 'VALOR INVÁLIDO';
-              FrmErroSistema.LblDescricaoErro.Text:= 'VOCÊ NÃO PODE GERAR UMA PARCELA SEM VALOR!!';
-              FrmErroSistema.RctTituloErro.Fill.Color:= RctDadosParcela.Fill.Color;
-              FrmErroSistema.SpBtAcao2.Visible:= False;
-              FrmErroSistema.ImgErro.Visible:= True;
-              FrmErroSistema.ImgAviso.Visible:= False;
-              FrmErroSistema.ShowModal;
+              E.mensagemErro('VALOR INVÁLIDO', 'VOCÊ NÃO PODE GERAR UMA PARCELA SEM VALOR!!', 0);
+
               EdtValorParcela.SetFocus;
             end
           else
             begin
-              FrmErroSistema:= TFrmErroSistema.Create(Application);
-              FrmErroSistema.LblTituloErro.Text:= 'SEM CONTA';
-              FrmErroSistema.LblDescricaoErro.Text:= 'VOCÊ NÃO PODE GERAR UMA PARCELA SEM UMA CONTA!!!';
-              FrmErroSistema.RctTituloErro.Fill.Color:= RctDadosParcela.Fill.Color;
-              FrmErroSistema.SpBtAcao2.Visible:= False;
-              FrmErroSistema.ImgErro.Visible:= True;
-              FrmErroSistema.ImgAviso.Visible:= False;
-              FrmErroSistema.ShowModal;
+              E.mensagemErro('SEM CONTA', 'VOCÊ NÃO PODE GERAR UMA PARCELA SEM UMA CONTA!!!', 0);
               EdtNomeConta.SetFocus;
             end;
           end;
@@ -509,10 +618,17 @@ begin
     else if Permite_Alteracao = False then
       begin
 
-      if messagedlg('Confirma Salvamento?' ,mtConfirmation,[mbYes,MbNo],0) = mrYes then
+      if A.mensagemAlerta('', 'Confirma Salvamento?', 1) = True then
         begin
+
+        if NovoOuEdita = 'N' then
+          Base.SalvaConta(EdtNomeConta.Text, StrToFloat(EdtValorDaConta.Text), DePagamento.Date, DeVencimento.Date, integer(CbTiposDeContas.Items.Objects[CbTiposDeContas.ItemIndex]), '')
+        else
+          Base.SalvaConta(EdtNomeConta.Text, StrToFloat(EdtValorDaConta.Text), DePagamento.Date, DeVencimento.Date, integer(CbTiposDeContas.Items.Objects[CbTiposDeContas.ItemIndex]), '', BaseResultadoConta[itemConsultaPagar].IdTabela);
+
           Lanca_Parcela                := False;
           Permite_Alteracao            :=  True;
+          LstBxConsulta.Clear;
 
           SpBtDeletar.Enabled          := True;
           SpBtEditar.Enabled           := True;
@@ -522,12 +638,13 @@ begin
           RctWorkSpace.Enabled         := False;
           GpParcelasReceber.Enabled    := False;
 
+          Cancelar;
           TbWork.TabIndex              := 1;
           Limparcampos;
         end
       else
         begin
-          ShowMessage('Operação Cancelada');
+          A.mensagemAlerta('', 'Operação Cancelada', 0);
         end;
       end;
     end;

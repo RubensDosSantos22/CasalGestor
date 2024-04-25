@@ -43545,7 +43545,7 @@ object FrContasAReceber: TFrContasAReceber
         Size.Width = 1276.000000000000000000
         Size.Height = 560.000000000000000000
         Size.PlatformDefault = False
-        TabIndex = 0
+        TabIndex = 1
         TabOrder = 0
         TabPosition = Dots
         Sizes = (
@@ -43557,7 +43557,7 @@ object FrContasAReceber: TFrContasAReceber
           CustomIcon = <
             item
             end>
-          IsSelected = True
+          IsSelected = False
           Size.Width = 8.000000000000000000
           Size.Height = 8.000000000000000000
           Size.PlatformDefault = False
@@ -43632,6 +43632,7 @@ object FrContasAReceber: TFrContasAReceber
                   OnKeyDown = EdtValorParcelaKeyDown
                   OnKeyUp = EdtValorParcelaKeyUp
                   OnEnter = EdtValorParcelaEnter
+                  OnExit = EdtValorParcelaExit
                 end
                 object LblValorParcela: TLabel
                   Align = Client
@@ -44468,6 +44469,7 @@ object FrContasAReceber: TFrContasAReceber
                   Size.Height = 24.000000000000000000
                   Size.PlatformDefault = False
                   TabOrder = 39
+                  OnChange = CbTiposDeContasChange
                 end
                 object LblValorConta: TLabel
                   Align = Right
@@ -44510,7 +44512,7 @@ object FrContasAReceber: TFrContasAReceber
                   StyledSettings = [Style, FontColor]
                   OnKeyDown = EdtValorDaContaKeyDown
                   OnKeyUp = EdtValorDaContaKeyUp
-                  OnEnter = EdtValorDaContaEnter
+                  OnExit = EdtValorDaContaExit
                 end
               end
             end
@@ -44539,7 +44541,7 @@ object FrContasAReceber: TFrContasAReceber
           CustomIcon = <
             item
             end>
-          IsSelected = False
+          IsSelected = True
           Size.Width = 8.000000000000000000
           Size.Height = 8.000000000000000000
           Size.PlatformDefault = False
@@ -44560,20 +44562,22 @@ object FrContasAReceber: TFrContasAReceber
             Stroke.Color = claNull
             XRadius = 20.000000000000000000
             YRadius = 20.000000000000000000
-            object LvResultadoPesquisa: TListView
-              ItemAppearanceClassName = 'TListItemAppearance'
-              ItemEditAppearanceClassName = 'TListItemShowCheckAppearance'
-              HeaderAppearanceClassName = 'TListHeaderObjects'
-              FooterAppearanceClassName = 'TListHeaderObjects'
+            object LstBxConsulta: TListBox
               Align = Client
-              Margins.Left = 20.000000000000000000
-              Margins.Top = 20.000000000000000000
-              Margins.Right = 20.000000000000000000
-              Margins.Bottom = 20.000000000000000000
-              Size.Width = 1196.000000000000000000
-              Size.Height = 387.000000000000000000
+              Margins.Left = 10.000000000000000000
+              Margins.Top = 10.000000000000000000
+              Margins.Right = 10.000000000000000000
+              Margins.Bottom = 10.000000000000000000
+              Size.Width = 1216.000000000000000000
+              Size.Height = 407.000000000000000000
               Size.PlatformDefault = False
               TabOrder = 38
+              DisableFocusEffect = True
+              DefaultItemStyles.ItemStyle = ''
+              DefaultItemStyles.GroupHeaderStyle = ''
+              DefaultItemStyles.GroupFooterStyle = ''
+              Viewport.Width = 1212.000000000000000000
+              Viewport.Height = 403.000000000000000000
             end
           end
           object RctFiltrosConsulta: TRectangle
@@ -44655,6 +44659,7 @@ object FrContasAReceber: TFrContasAReceber
                 StyledSettings = [Style, FontColor]
                 TabOrder = 39
                 TextSettings.Font.Family = 'BIZ UDPGothic'
+                OnExit = DeInicioConsultaExit
               end
               object LblPeriodoPesquisaDe: TLabel
                 Align = Left
@@ -44704,6 +44709,7 @@ object FrContasAReceber: TFrContasAReceber
                 StyledSettings = [Style, FontColor]
                 TabOrder = 38
                 TextSettings.Font.Family = 'BIZ UDPGothic'
+                OnExit = DeFimConsultaExit
               end
               object RbTipoPagamento: TRadioButton
                 Align = Left
@@ -44718,6 +44724,7 @@ object FrContasAReceber: TFrContasAReceber
                 Size.PlatformDefault = False
                 TabOrder = 41
                 Text = 'Pagamento'
+                OnChange = RbTipoPagamentoChange
               end
               object RbTipoVencimento: TRadioButton
                 Align = Left
@@ -44732,6 +44739,7 @@ object FrContasAReceber: TFrContasAReceber
                 Size.PlatformDefault = False
                 TabOrder = 40
                 Text = 'Vencimento'
+                OnChange = RbTipoVencimentoChange
               end
             end
           end
