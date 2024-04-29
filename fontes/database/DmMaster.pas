@@ -163,6 +163,7 @@ var
 
 
   function CheckInternet: Boolean;
+  function ConnectFBase: Boolean;
 
 var
   Dm: TDm;
@@ -173,7 +174,7 @@ implementation
 
 {$R *.dfm}
 
-    {$REGION 'Verifica Conexão com a  Internet'}
+    {$REGION 'Verificações Conexão com a  Internet'}
 
 function CheckInternet: boolean;
 var
@@ -190,6 +191,28 @@ begin
     end;
   finally
     http.DisposeOf;
+  end;
+end;
+
+function ConnectFBase: Boolean;
+var
+   caminho: string;
+begin
+  try
+
+  if Dm.Confb.Connected then
+    Dm.Confb.Connected:= False;
+
+    Dm.Confb.Connected:= True;
+  except
+    try
+    Dm.Confb.Connected:= False;
+    caminho:= ExtractFilePath(ParamStr(0));
+    Dm.Confb.Params.Database:= caminho + '\database\Data.FDB';
+    Dm.Confb.Connected:= True;
+    except
+      ShowMessage('Não foi possível conectar/reconectar ao banco');
+    end;
   end;
 end;
     {$ENDREGION}

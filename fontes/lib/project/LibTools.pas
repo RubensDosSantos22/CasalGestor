@@ -1,5 +1,5 @@
-
 unit LibTools;
+
 interface
 
 /// <summary>
@@ -68,13 +68,9 @@ uses
 
       //---------------------------------------------------------------------------------------------------
 
-      procedure Estado(Components: array of TComponent; State: Boolean);
-      procedure LimpaCampos(Components: array of TComponent);
       procedure SetValuesOnfields(Fields: array of TComponent; Keys: array of Integer; Controls: array of string; ValueFields: array of string);
       procedure AbreTela(CdScreen: string);
       procedure CloseScreens;
-      procedure shortcutKeys(var Key: Word);
-      procedure sttsBarSetup;
   end;
 
   MathProcess = class
@@ -107,14 +103,6 @@ uses
     FoneAction    : string;
     ConvertedDate : string;
 
-    ComboFilter,
-    NumberFilter,
-    TexteFilter,
-    TextFilter,
-    DateFilter,
-    LikeFilter,
-    JoinFilter,
-    IndexFilter: string;
     ActualScreen : Tform;
     LiberaAcesso: boolean;
 
@@ -170,7 +158,6 @@ begin
 
   Result:= numberized;
 end;
-
 //--------------------------------------====<  >====-------------------------------------\\
 
 
@@ -270,148 +257,6 @@ begin
       Control[2]:= Controls[k];
     end;
 end;
-
-procedure Acoes.shortcutKeys(var Key: Word);
-var
-  Bt: TSpeedButton;
-begin
-  {if (key = VK_F5) and (useCad = 'S') then
-    begin
-      bt:= TSpeedButton(ActualScreen.FindComponent('BtSalvar'));
-      bt.OnClick(Application);
-    end
-  else if (key = VK_F6) and (useCad = 'S') and (ActualScreen <> FrSetup) then
-    begin
-      bt:= TSpeedButton(ActualScreen.FindComponent('BtNovo'));
-      bt.OnClick(Application);
-    end
-  else if (key = VK_DELETE) and (ActualScreen <> FrAdicionaUsuariosHeveasoft) then
-    begin
-      bt:= TSpeedButton(ActualScreen.FindComponent('BtExcluir'));
-      bt.OnClick(Application);
-    end
-  else if (key = VK_F7) and (ActualScreen = FrMultiempresa) then
-    begin
-      bt:= TSpeedButton(ActualScreen.FindComponent('BtConfigurar'));
-      bt.OnClick(Application);
-    end
-  else if (key = VK_RETURN) and (ActualScreen = FrAdicionaUsuariosHeveasoft) then
-    begin
-      bt:= TSpeedButton(ActualScreen.FindComponent('BtAdicionaUsuarioPropriedade'));
-      bt.OnClick(Application);
-    end
-  else if (key = VK_DELETE) and (ActualScreen = FrAdicionaUsuariosHeveasoft) then
-    begin
-      bt:= TSpeedButton(ActualScreen.FindComponent('BtRemoveUsuarioPropriedade'));
-      bt.OnClick(Application);
-    end
-  else if key = VK_ESCAPE then
-    begin
-      CloseScreens;
-    end
-  else if (key = VK_F3) and (useSearch = 'S') then
-    begin
-      Pesquisa;
-    end; }
-end;
-
-procedure Acoes.sttsBarSetup;
-var
-  Menu: TStatusBar;
-begin
-  {Menu:= TStatusBar(FrIndex.FindComponent('StsAtalhos'));
-
-  with Menu do
-    begin
-    if useCad = 'S' then
-      begin
-        Panels[0].Text:= 'F5  - SALVAR';
-
-      if  ActualScreen <> FrSetup then
-        begin
-          Panels[1].Text:= 'F6  - NOVO';
-        end
-      else
-        begin
-          Panels[1].Text:= '';
-        end;
-
-        Panels[2].Text:= 'DEL - EXCLUIR';
-      end
-    else
-      begin
-        Panels[0].Text:= '';
-        Panels[1].Text:= '';
-        Panels[2].Text:= '';
-      end;
-
-    if useSearch = 'S' then
-      begin
-        Panels[3].Text:= 'F3 - PESQUISAR';
-      end
-    else
-      begin
-        Panels[3].Text:= '';
-      end;
-
-    if ActualScreen = FrMultiempresa then
-      begin
-        Panels[4].Text:= 'F7 - CONFIGURAR';
-      end
-    else
-      begin
-        Panels[4].Text:= '';
-      end;
-    end;  }
-end;
-
-//--------------------------------------====<  >====-------------------------------------\\
-
-//------====< DEFINE O ESTADO DOS COMPOENTES QUE ESTIVEREM NA ARRAY D E COMPONENTES >====------\\
-procedure Acoes.Estado(Components: array of TComponent; State: Boolean);
-var
-  i: Integer;
-begin
-  for i := 0 to Length(Components) - 1 do
-    begin
-    if (Components[i] is TEdit) then
-      begin
-        (Components[i] as TEdit).Enabled:= State;
-      end
-    else if (Components[i] is TMaskEdit) then
-      begin
-        (Components[i] as TMaskEdit).Enabled:= State;
-      end
-    else if (Components[i] is TPanel) then
-      begin
-        (Components[i] as TPanel).Enabled:= State;
-      end;
-    end;
-end;
-//--------------------------------------====<  >====-------------------------------------\\
-
-//------====< LIMPA OS CAMPOS QUE ESTÃO DENTRO DA ARRAY DE COMPONENTES >====-------------\\
-procedure Acoes.LimpaCampos(Components: array of TComponent);
-var
-  i: Integer;
-begin
-  for i := 0 to length(Components) -1 do
-    begin
-    if (Components[i] is TEdit) then
-      begin
-        (Components[i] as TEdit).Clear;
-      end
-    else if (Components[i] is TMaskEdit) then
-      begin
-        (Components[i] as TMaskEdit).Clear;
-      end
-    else if (Components[i] is TMemo) then
-      begin
-        (Components[i] as TMemo).Clear;
-      end;
-    end;
-end;
-//--------------------------------------====<  >====-------------------------------------\\
 
 //------------------------====< ABRIR UMA TELA NO PROGRAMA >====-------------------------\\
 procedure Acoes.AbreTela(CdScreen: string);

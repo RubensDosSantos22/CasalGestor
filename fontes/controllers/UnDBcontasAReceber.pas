@@ -127,6 +127,14 @@ type
         property Observacoes                 : string       read TObservacoes  write TObservacoes;
    end;
 
+   comboItem = class(TListBoxItem)
+      private
+        iid: integer;
+        itext: string;
+      public
+        property id: integer read iid write iid;
+        property Text: string read itext write itext;
+      end;
 
     DBReceber = class
 
@@ -156,7 +164,9 @@ var
    BaseResultadoConta                     : TList<TConta>;
    BaseResultadoParcela                   : TList<TParcela>;
    Cons: Query;
-      i: Integer;
+   i: Integer;
+   ic: comboItem;
+
 
 implementation
 
@@ -357,7 +367,7 @@ begin
     begin
 
       setQuery(3);
-      select('TP_RECEITA','','','', 'NOME');
+      select('TP_RECEITA','','','', 'ID');
 
     while QryFb.Eof = False do
       begin

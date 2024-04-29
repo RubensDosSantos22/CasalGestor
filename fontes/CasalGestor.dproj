@@ -217,6 +217,17 @@
         <DCCReference Include="controllers\UnDBcontasAPagar.pas"/>
         <DCCReference Include="controllers\UnDBcontasAReceber.pas"/>
         <DCCReference Include="frames\controllers\UnControleErros.pas"/>
+        <DCCReference Include="controllers\UnDBcadastros.pas"/>
+        <DCCReference Include="controllers\UnDBlancamentos.pas"/>
+        <DCCReference Include="UnLoading.pas">
+            <Form>FrLoading</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
+        <DCCReference Include="UnInstalacao.pas">
+            <Form>Form1</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
+        <DCCReference Include="lib\LibSetup.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

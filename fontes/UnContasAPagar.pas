@@ -32,12 +32,16 @@ uses
   FMX.TabControl,
   FMX.Layouts,
   FMX.Dialogs.Win,
+  FMX.Memo.Types,
+  FMX.ScrollBox,
+  FMX.Memo,
 
   vcl.Dialogs,
 
-  LibControlGrids, FMX.Memo.Types, FMX.ScrollBox, FMX.Memo,
-
-  UnDBcontasAPagar, UnFrmItensContas, UnControleErros;
+  LibControlGrids,
+  UnDBcontasAPagar,
+  UnFrmItensContas,
+  UnControleErros;
 
     {$ENDREGION}
 
@@ -165,7 +169,7 @@ type
   public
     Lanca_Parcela, Permite_Alteracao: Boolean;
     Valor: string;
-     NovoOuEdita: string;
+    NovoOuEdita: string;
 
     {$ENDREGION}
 
@@ -306,7 +310,7 @@ end;
 
 procedure TFrContasAPagar.CbTiposDeContasChange(Sender: TObject);
 begin
-  EdtNomeConta.Text:= '';
+//  EdtNomeConta.Text:= '';
 end;
 
 procedure TFrContasAPagar.DeFimConsultaExit(Sender: TObject);

@@ -3,7 +3,6 @@ unit UnDBcontasAPagar;
 interface
 
 uses
-
     {$REGION 'Uses do Projeto'}
 
   System.SysUtils,
@@ -82,7 +81,6 @@ uses
     {$ENDREGION}
 
 type
-
     {$REGION 'Declarações do controlador'}
 
    TConta = class

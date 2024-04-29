@@ -3,10 +3,10 @@ unit LibControlGrids;
 interface
 
 /// <summary>
-///  Esta unit contém a implementação das classes de design do projeto, de forma global
+///          Esta unit contém a implementação das classes de design do projeto, de forma global
 /// </summary>
 /// <remarks>
-///  A classe animNoTime realiza o trabalho gráfico dos menus das telas.
+///          A classe animNoTime realiza o trabalho gráfico dos menus das telas.
 /// </remarks>
 
 uses

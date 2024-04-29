@@ -32,12 +32,16 @@ uses
   FMX.TabControl,
   FMX.Layouts,
   FMX.Dialogs.Win,
+  FMX.Memo.Types,
+  FMX.ScrollBox,
+  FMX.Memo,
 
   vcl.Dialogs,
 
-  LibControlGrids, FMX.Memo.Types, FMX.ScrollBox, FMX.Memo,
-
-  UnDBcontasAReceber, UnFrmItensContas, UnControleErros;
+  LibControlGrids,
+  UnDBcontasAReceber,
+  UnFrmItensContas,
+  UnControleErros;
 
     {$ENDREGION}
 
@@ -163,7 +167,7 @@ type
   public
     Lanca_Parcela, Permite_Alteracao: Boolean;
     Valor: string;
-     NovoOuEdita: string;
+    NovoOuEdita: string;
 
     {$ENDREGION}
 
@@ -173,6 +177,7 @@ var
    Base: DBReceber;
    E: Erro;
    A: Aviso;
+   formatoValor: string = '###,###,##0.00';
 
 var
   FrContasAReceber: TFrContasAReceber;
@@ -272,16 +277,38 @@ begin
     end;
 end;
 
+procedure configuraTela(state: Boolean);
+begin
+
+  with FrContasAReceber do
+    begin
+
+      Parcela.resetSearch;
+      Permite_Alteracao           := state;
+      SpBtDeletar.Enabled         := state;
+      SpBtEditar.Enabled          := state;
+      SpBtNovo.Enabled            := state;
+      SpBtCancelar.Enabled        := not state;
+      RctWorkSpace.Enabled        := not state;
+//      GpParcelasReceber.Enabled   := not state;
+      Lanca_Parcela               := not state;
+
+    if state then
+      TbWork.TabIndex             := 1
+    else
+      TbWork.TabIndex             := 0
+    end;
+end;
+
 {$ENDREGION}
 
 {$R *.fmx}
-
 
 {$REGION 'Ações de Edits'}
 
 procedure TFrContasAReceber.CbTiposDeContasChange(Sender: TObject);
 begin
-  EdtNomeConta.Text:= '';
+  //EdtNomeConta.Text:= '';
 end;
 
 procedure TFrContasAReceber.DeFimConsultaExit(Sender: TObject);
@@ -344,11 +371,11 @@ end;
 procedure TFrContasAReceber.FormKeyUp(Sender: TObject; var Key: Word; var
     KeyChar: Char; Shift: TShiftState);
 begin
-  if Key = 13 then // Enter - salvar parcela
+  {if Key = 13 then // Enter - salvar parcela
     begin
       Botoes.Salvar('P');
     end
-  else if Key = 113 then // F2 - Editar registro
+  else} if Key = 113 then // F2 - Editar registro
     begin
       Botoes.Editar;
     end
@@ -385,7 +412,7 @@ end;
 procedure TFrContasAReceber.FormShow(Sender: TObject);
 begin
   RctWorkSpace.Enabled                     := False;
-  GpParcelasReceber.Enabled                := False;
+//  GpParcelasReceber.Enabled                := False;
   Permite_Alteracao                        := True;
   TbWork.TabIndex                          := 1;
   Limparcampos;
@@ -462,19 +489,8 @@ procedure navBar.Adicionar;
 begin
   with FrContasAReceber do
     begin
-      Permite_Alteracao           := False;
-      Lanca_Parcela               := True;
-
-      SpBtDeletar.Enabled         := False;
-      SpBtEditar.Enabled          := False;
-      SpBtNovo.Enabled            := False;
-      SpBtCancelar.Enabled        := True;
-
-      RctWorkSpace.Enabled        := True;
-      GpParcelasReceber.Enabled   := True;
       NovoOuEdita:= 'N';
-
-      TbWork.TabIndex             := 0;
+      configuraTela(False);
       Limparcampos;
     end;
 end;
@@ -483,21 +499,10 @@ procedure navBar.Cancelar;
 begin
   with FrContasAReceber do
     begin
-      NovoOuEdita:= '';
-      Permite_Alteracao                   := True;
-      Lanca_Parcela                       := False;
-
-      SpBtDeletar.Enabled                 := True;
-      SpBtEditar.Enabled                  := True;
-      SpBtNovo.Enabled                    := True;
-      SpBtCancelar.Enabled                := False;
-
-      RctWorkSpace.Enabled                := False;
-      GpParcelasReceber.Enabled           := False;
-
-      TbWork.TabIndex                     := 1;
-      ConsultarContas;
       Limparcampos;
+      NovoOuEdita:= '';
+      configuraTela(True);
+      ConsultarContas;
     end;
 end;
 
@@ -508,28 +513,18 @@ begin
   with FrContasAReceber do
     begin
       NovoOuEdita:= 'E';
-      Permite_Alteracao                   := False;
-      Lanca_Parcela                       := True;
-
-      SpBtDeletar.Enabled                 := False;
-      SpBtEditar.Enabled                  := False;
-      SpBtNovo.Enabled                    := False;
-      SpBtCancelar.Enabled                := True;
-
-      RctWorkSpace.Enabled                := True;
-      GpParcelasReceber.Enabled           := True;
+      configuraTela(False);
 
       chave := itemConsultaPagar;
 
-      CbTiposDeContas.ItemIndex:= -1;
-      EdtValorDaConta.Text:= FormatFloat('###,###,##0.00', BaseResultadoConta[chave].Valor);
-      DePagamento.Date:= BaseResultadoConta[chave].Recebimento;
-      DeVencimento.Date:= BaseResultadoConta[chave].Vencimento;
-      EdtNomeConta.Text:= BaseResultadoConta[chave].CodigoConta;
-      chaveRegistroEdicao:= BaseResultadoConta[chave].IdTabela;
-      LstBxParcelasAPagar.Clear;
+      CbTiposDeContas.ItemIndex  := BaseResultadoConta[chave].Receita;
+      EdtValorDaConta.Text       := FormatFloat(formatoValor, BaseResultadoConta[chave].Valor);
+      DePagamento.Date           := BaseResultadoConta[chave].Recebimento;
+      DeVencimento.Date          := BaseResultadoConta[chave].Vencimento;
+      EdtNomeConta.Text          := BaseResultadoConta[chave].CodigoConta;
+      chaveRegistroEdicao        := BaseResultadoConta[chave].IdTabela;
 
-      TbWork.TabIndex                     := 0;
+      LstBxParcelasAPagar.Clear;
     end;
 end;
 
@@ -626,20 +621,9 @@ begin
         else
           Base.SalvaConta(EdtNomeConta.Text, StrToFloat(EdtValorDaConta.Text), DePagamento.Date, DeVencimento.Date, integer(CbTiposDeContas.Items.Objects[CbTiposDeContas.ItemIndex]), '', BaseResultadoConta[itemConsultaPagar].IdTabela);
 
-          Lanca_Parcela                := False;
-          Permite_Alteracao            :=  True;
+          configuraTela(True);
           LstBxConsulta.Clear;
-
-          SpBtDeletar.Enabled          := True;
-          SpBtEditar.Enabled           := True;
-          SpBtNovo.Enabled             := true;
-          SpBtCancelar.Enabled         := False;
-
-          RctWorkSpace.Enabled         := False;
-          GpParcelasReceber.Enabled    := False;
-
           Cancelar;
-          TbWork.TabIndex              := 1;
           Limparcampos;
         end
       else
@@ -649,6 +633,7 @@ begin
       end;
     end;
 end;
+
 {$ENDREGION}
 
 end.

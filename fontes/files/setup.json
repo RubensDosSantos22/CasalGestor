@@ -1,0 +1,31 @@
+{
+    "usuarios": [
+      {
+        "nome": "João",
+        "preferencias": {
+          "aparencia": {
+            "tema": "escuro",
+            "tamanhoFonte": 14
+          },
+          "notificacoes": {
+            "email": true,
+            "sms": false
+          }
+        }
+      },
+      {
+        "nome": "Maria",
+        "preferencias": {
+          "aparencia": {
+            "tema": "claro",
+            "tamanhoFonte": 16
+          },
+          "notificacoes": {
+            "email": true,
+            "sms": true
+          }
+        }
+      }
+    ]
+  }
+  
