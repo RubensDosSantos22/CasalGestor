@@ -81,15 +81,55 @@ uses
     {$ENDREGION}
 
 type
-   dataConvert = class
-     function dataParaString(Dt: TDate): string;
-   end;
+  comboItemDespesa = class(TListBoxItem)
+  private
+    Tid                : integer;
+    TDisplay           : string;
+    TCdDespesa         : string;
+  public
+    property id        : integer read Tid write Tid;
+    property Display   : string read TDisplay write TDisplay;
+    property CdDespesa : string read TCdDespesa write TCdDespesa;
+  end;
 
-    Despesas = class
-      procedure despesaCombobox(Cbx: TCombobox);
-      procedure consultaDespesa;
-    end;
+  comboItemReceita = class(TListBoxItem)
+  private
+    Tid                : integer;
+    TDisplay           : string;
+    TCdReceita         : string;
+  public
+    property id        : integer read Tid write Tid;
+    property Display   : string read TDisplay write TDisplay;
+    property CdReceita : string read TCdReceita write TCdReceita;
+  end;
 
+  dataConvert = class
+   function dataParaString(Dt: TDate): string;
+  end;
+
+  Despesas = class
+    procedure despesaCombobox(Cbx: TCombobox);
+    procedure despToCbxItem(Cbx: TCombobox; id: integer);
+    procedure consultaDespesa;
+  end;
+
+  Receitas = class
+    procedure receitaCombobox(Cbx: TCombobox);
+    procedure receToCbxItem(Cbx: TCombobox; id: integer);
+    procedure consultaReceita;
+  end;
+
+  TComboItemInfo = record
+    Index: Integer;
+    ID: Integer;
+  end;
+
+var
+  iDCbx: comboItemDespesa;
+  iRCbx: comboItemReceita;
+  ItemInfo: TComboItemInfo;
+  Cons: Query;
+  ComboItemsMap: TDictionary<Integer, TComboItemInfo>;
 
 implementation
 
@@ -108,8 +148,130 @@ begin
 end;
 
 procedure Despesas.despesaCombobox(Cbx: TCombobox);
+var
+  i: Integer;
+begin
+
+  if ComboItemsMap <> nil then
+     ComboItemsMap.Clear;
+
+  with Cons.FB do
+    begin
+      setQuery(3);
+      select('TP_DESPESA','','','', 'NOME');
+
+      ComboItemsMap:= TDictionary<Integer, TComboItemInfo>.Create;
+
+      Cbx.Controls.Clear;
+      Cbx.BeginUpdate;
+
+    while not QryFb.Eof do
+      begin
+        iDCbx := comboItemDespesa.Create(Cbx);
+
+      with iDCbx as comboItemDespesa do
+        begin
+          Parent        := Cbx;
+          Name          := 'item' + VarToStr(vlrField('ID'));
+          ItemData.Text := vlrField('NOME');
+          id            := vlrField('ID');
+          Display       := vlrField('NOME');
+          CdDespesa     := vlrField('CODIGO_DESPESA');
+          Tag           := vlrField('ID');
+
+        ItemInfo.Index := Cbx.ControlsCount;
+        ItemInfo.ID := iDCbx.id;
+
+        ComboItemsMap.Add(iDCbx.id, ItemInfo);
+
+        TThread.Synchronize(TThread.CurrentThread,
+          procedure()
+          begin
+            Cbx.Controls.Add(iDCbx);
+          end);
+        end;
+        QryFb.Next;
+      end;
+
+      Cbx.EndUpdate;
+    end;
+end;
+
+
+procedure Despesas.despToCbxItem(Cbx: TCombobox; id: integer);
+begin
+
+  if ComboItemsMap.TryGetValue(id, ItemInfo) then
+    Cbx.ItemIndex := ItemInfo.Index
+  else
+    ShowMessage('Despesa não encontrada');
+end;
+
+{ Receitas }
+
+procedure Receitas.consultaReceita;
 begin
   //pass
+end;
+
+procedure Receitas.receitaCombobox(Cbx: TCombobox);
+var
+  i: Integer;
+begin
+
+  if ComboItemsMap <> nil then
+     ComboItemsMap.Clear;
+
+  with Cons.FB do
+    begin
+      setQuery(3);
+      select('TP_RECEITA','','','', 'NOME');
+
+      ComboItemsMap:= TDictionary<Integer, TComboItemInfo>.Create;
+
+      Cbx.Controls.Clear;
+      Cbx.BeginUpdate;
+
+    while not QryFb.Eof do
+      begin
+        iRCbx := comboItemReceita.Create(Cbx);
+
+      with iRCbx as comboItemReceita do
+        begin
+          Parent        := Cbx;
+          Name          := 'item' + VarToStr(vlrField('ID'));
+          ItemData.Text := vlrField('NOME');
+          id            := vlrField('ID');
+          Display       := vlrField('NOME');
+          CdReceita     := vlrField('CODIGO_RECEITA');
+          Tag           := vlrField('ID');
+
+        ItemInfo.Index  := Cbx.ControlsCount;
+        ItemInfo.ID     := iRCbx.id;
+
+        ComboItemsMap.Add(iRCbx.id, ItemInfo);
+
+        TThread.Synchronize(TThread.CurrentThread,
+          procedure()
+          begin
+            Cbx.Controls.Add(iRCbx);
+          end);
+        end;
+        QryFb.Next;
+      end;
+
+      Cbx.EndUpdate;
+    end;
+end;
+
+
+procedure Receitas.receToCbxItem(Cbx: TCombobox; id: integer);
+begin
+
+  if ComboItemsMap.TryGetValue(id, ItemInfo) then
+    Cbx.ItemIndex := ItemInfo.Index
+  else
+    ShowMessage('Despesa não encontrada');
 end;
 
 end.

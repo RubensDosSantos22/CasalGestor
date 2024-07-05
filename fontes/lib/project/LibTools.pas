@@ -32,7 +32,7 @@ uses
 {$ENDREGION}
 
   type
-    Acoes = class
+    TAcoes = class
 
       //---------------------------------------------------------------------------------------------------
       /// <summary>
@@ -109,7 +109,7 @@ uses
 implementation
 
 //--------------------------------------====<  >====-------------------------------------\\
-function Acoes.parToCheck(par:string): boolean;
+function TAcoes.parToCheck(par:string): boolean;
 begin
 
   if par  = '-1' then
@@ -127,7 +127,7 @@ end;
 
 
 //--------------------------------------====<  >====-------------------------------------\\
-function Acoes.checkToPar(CheckField:boolean): string;
+function TAcoes.checkToPar(CheckField:boolean): string;
 begin
 
   if CheckField  = True then
@@ -163,7 +163,7 @@ end;
 
 
 //--------------------------------------====<  >====-------------------------------------\\
-procedure Acoes.StrToPhone(PhoneText: String);
+procedure TAcoes.StrToPhone(PhoneText: String);
 const
   // Formatos estrangeiros de números de telefone
   E164:               string = '!\+0 000 000 0000;1;_';
@@ -221,7 +221,7 @@ end;
 //--------------------------------------====<  >====-------------------------------------\\
 
 //------------====< PEGAR O VALOR DE UM PARÂMETRO E SETÁ-LO EM UM CAMPO >====------------\\
-procedure Acoes.SetValuesOnfields(Fields: array of TComponent;
+procedure TAcoes.SetValuesOnfields(Fields: array of TComponent;
   Keys: array of Integer; Controls: array of string; ValueFields: array of string);
 var
   i, j, k: Integer;
@@ -259,7 +259,7 @@ begin
 end;
 
 //------------------------====< ABRIR UMA TELA NO PROGRAMA >====-------------------------\\
-procedure Acoes.AbreTela(CdScreen: string);
+procedure TAcoes.AbreTela(CdScreen: string);
 begin
   {CloseScreens;
   FrIndex.PnlMenu.Width:= 0;
@@ -408,7 +408,7 @@ end;
 //--------------------------------------====<  >====-------------------------------------\\
 
 //----------------------------====< FECHAR TODAS AS TELAS >====--------------------------\\
-procedure Acoes.CloseScreens;
+procedure TAcoes.CloseScreens;
 var
   i: Integer;
 begin

@@ -14,7 +14,9 @@ type
     LblVencimento: TLabel;
     LblValor: TLabel;
     SpBtDeleteItem: TSpeedButton;
-    Img1: TImage;
+    ImgSpBtDeleteItem: TImage;
+    LblIdTabela: TLabel;
+    LblMoeda: TLabel;
     procedure FrameMouseEnter(Sender: TObject);
     procedure FrameMouseLeave(Sender: TObject);
   private

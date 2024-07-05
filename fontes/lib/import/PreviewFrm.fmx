@@ -1,0 +1,104 @@
+object frmPreview: TfrmPreview
+  Left = 0
+  Top = 0
+  Caption = 'Print Preview'
+  ClientHeight = 407
+  ClientWidth = 562
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object ToolBar1: TToolBar
+    Size.Width = 562.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object spbPages: TSpinBox
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 4
+      Cursor = crIBeam
+      Min = 1.000000000000000000
+      Value = 1.000000000000000000
+      Position.X = 344.000000000000000000
+      Position.Y = 8.000000000000000000
+      OnChange = spbPagesChange
+    end
+    object cmbZoom: TComboEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 1
+      DropDownCount = 10
+      ItemHeight = 19.000000000000000000
+      Items.Strings = (
+        '20%'
+        '50%'
+        '100%'
+        '150%'
+        '200%'
+        '300%'
+        '500%'
+        'Page width'
+        'Full page')
+      ItemIndex = -1
+      Position.X = 80.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 169.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      OnChange = cmbZoomChange
+    end
+    object Label1: TLabel
+      AutoSize = True
+      Position.X = 16.000000000000000000
+      Position.Y = 11.000000000000000000
+      Size.Width = 65.000000000000000000
+      Size.Height = 16.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Zoom:'
+    end
+    object Label2: TLabel
+      AutoSize = True
+      Position.X = 288.000000000000000000
+      Position.Y = 11.000000000000000000
+      Size.Width = 57.000000000000000000
+      Size.Height = 16.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Page:'
+    end
+    object lblPageCount: TLabel
+      AutoSize = True
+      Position.X = 448.000000000000000000
+      Position.Y = 11.000000000000000000
+      Size.Width = 21.000000000000000000
+      Size.Height = 16.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.WordWrap = False
+      Text = 'of 1'
+    end
+  end
+  object RVPrintPreview1: TRVPrintPreview
+    Align = Client
+    Size.Width = 562.000000000000000000
+    Size.Height = 367.000000000000000000
+    Size.PlatformDefault = False
+    StyleLookup = 'memostyle'
+    TabOrder = 2
+    Fill.Kind = Gradient
+    Fill.Gradient.Points = <
+      item
+        Color = xFFF8F7F7
+        Offset = 0.000000000000000000
+      end
+      item
+        Color = xFFC7C5C5
+        Offset = 1.000000000000000000
+      end>
+    Fill.Gradient.StartPosition.X = 0.411836475133895900
+    Fill.Gradient.StopPosition.X = 0.588163495063781700
+    OnZoomChanged = RVPrintPreview1ZoomChanged
+    PageBorderColor = claDarkgray
+    ShadowColor = x14000000
+    ShadowWidth = 5
+    Viewport.Width = 558.000000000000000000
+    Viewport.Height = 363.000000000000000000
+  end
+end

@@ -77,7 +77,8 @@ uses
   FMX.Layouts,
   FMX.Dialogs.Win,
 
-   DmMaster;
+   DmMaster,
+   UnDBcadastros;
     {$ENDREGION}
 
 type
@@ -115,6 +116,7 @@ type
         TIdConta: integer;
         TValor: Double;
         TPagamento: TDate;
+        TVencimento: TDate;
         TObservacoes: string;
      public
         property Id                          : Integer      read TId           write TId;
@@ -122,30 +124,22 @@ type
         property Conta                       : Integer      read TIdConta      write TIdConta;
         property Valor                       : Double       read TValor        write TValor;
         property Pagamento                   : TDate        read TPagamento    write TPagamento;
+        property vencimento                  : TDate        read Tvencimento   write Tvencimento;
         property Observacoes                 : string       read TObservacoes  write TObservacoes;
    end;
-
-   comboItem = class(TListBoxItem)
-      private
-        iid: integer;
-        itext: string;
-      public
-        property id: integer read iid write iid;
-        property Text: string read itext write itext;
-      end;
 
     DBPagar = class
 
       //Salvamento
       procedure SalvaConta(conta: string; valor: Double; Pagamento, Vencimento: TDate; Despesa: Integer; Obs: string; id: integer = 0);
-      procedure SalvaParcela(IdConta: integer; valor: Double; Pagamento: TDate; Obs: string; id: integer = 0);
+      procedure SalvaParcela(IdConta: integer; valor: Double; Pagamento, Vencimento: TDate; Obs: string; id: integer = 0);
 
       //Exclusão
       procedure DeletaConta(idConta: integer);
       procedure DeletaParcela(IdParcela: integer);
 
       //Consulta
-      function PesquisarContas(TipoData: Integer; Inicio, Fim: TDate): TList<TConta>;
+      function PesquisarContas(TipoData: string; Inicio, Fim: TDate): TList<TConta>;
       function PesquisarParcelas(IdConta: integer): TList<TParcela>;
 
       procedure PreencheContas(Cbx: TComboBox);
@@ -153,7 +147,7 @@ type
     private
       //Salvamento dos dados
       procedure salvaDadosConta(tbId: Integer; tbConta: string; tbValor: Double; tbPagamento, tbVencimento: TDate; tbDespesa: Integer; tbObservacoes: string; tbCreated, tbUpdated: TDateTime);
-      procedure salvaDadosParcela(tbId, tbConta: integer; tbValor: Double; tbPagamento: TDate; tbObservacoes: string);
+      procedure salvaDadosParcela(tbId, tbConta: integer; tbValor: Double; tbPagamento, tbVencimento: TDate; tbObservacoes: string);
     end;
 
   {$ENDREGION}
@@ -163,7 +157,7 @@ var
    BaseResultadoParcela                   : TList<TParcela>;
    Cons: Query;
    i: Integer;
-   ic: comboItem;
+   Desp: Despesas;
 
 implementation
 
@@ -191,7 +185,7 @@ begin
     i:= i + 1;
 end;
 
-procedure DBPagar.salvaDadosParcela(tbId, tbConta: integer; tbValor: Double; tbPagamento: TDate; tbObservacoes: string);
+procedure DBPagar.salvaDadosParcela(tbId, tbConta: integer; tbValor: Double; tbPagamento, tbVencimento: TDate; tbObservacoes: string);
 begin
 
   BaseResultadoParcela.Add(TParcela.Create);
@@ -203,6 +197,7 @@ begin
       Conta               := tbConta;
       Valor               := tbValor;
       Pagamento           := tbPagamento;
+      Vencimento          := tbVencimento;
       Observacoes         := tbObservacoes;
     end;
 
@@ -246,13 +241,22 @@ begin
 end;
 
 procedure DBPagar.SalvaParcela(IdConta: integer; valor: Double;
-  Pagamento: TDate; Obs: string; id: integer = 0);
+  Pagamento, Vencimento: TDate; Obs: string; id: integer = 0);
+var
+   pagto, vencto: string;
 begin
+
+  pagto:= DateToStr(Pagamento);
+  pagto:= Copy(pagto, 4, 2) + '/' + Copy(pagto, 0, 2) + '/' + Copy(pagto, 7, 4);
+
+  vencto:= DateToStr(Vencimento);
+  vencto:= Copy(vencto, 4, 2) + '/' + Copy(vencto, 0, 2) + '/' + Copy(vencto, 7, 4);
+
 
   with Cons.FB do
     begin
 
-      command_fields:= ['CONTA', 'VALOR', 'DATA_PAGAMENTO', 'OBSERVACOES'];
+      command_fields:= ['CONTA', 'VALOR', 'DATA_PAGAMENTO', 'DATA_VENCIMENTO', 'OBSERVACOES'];
 
     if id = 0 then
       begin
@@ -263,7 +267,7 @@ begin
         update('PARCELA_CT_PAGAR', command_fields, id);
       end;
 
-      parameters([Idconta, valor, Pagamento, obs], command_fields);
+      parameters([Idconta, valor, pagto, obs], command_fields);
     end;
 end;
 
@@ -284,7 +288,7 @@ end;
 // -----------------------------------------------------------------------------
 
 // Consulta --------------------------------------------------------------------
-function DBPagar.PesquisarContas(TipoData: Integer; Inicio,
+function DBPagar.PesquisarContas(TipoData: string; Inicio,
   Fim: TDate): TList<TConta>;
 var
    Campo_Data: string;
@@ -294,10 +298,9 @@ begin
   if BaseResultadoConta <> nil then
     BaseResultadoConta.Destroy;
 
-
   i:= 0;
 
-  if TipoData = 0 then
+  if TipoData = '-1' then
     Campo_Data:= 'DATA_VENCIMENTO'
   else
     Campo_Data:= 'DATA_PAGAMENTO';
@@ -327,7 +330,7 @@ begin
       end
     else
       begin
-        ShowMessage('NÃO HÁ LANÇAMENTOS PARA O PERÍODO SELECIONADO');
+        //ShowMessage('NÃO HÁ LANÇAMENTOS PARA O PERÍODO SELECIONADO');
       end;
     end;
 
@@ -344,12 +347,12 @@ begin
     begin
 
       setQuery(2);
-      select('CT_PAGAR','','',' ID = :ID ', 'ID');
+      select('PARCELA_CT_PAGAR','','',' CONTA = :ID ', 'ID');
       parameters([IdConta], ['ID']);
 
     while QryFb.Eof = False do
       begin
-        salvaDadosParcela(vlrField('ID'), vlrField('CONTA'), vlrField('VALOR'), vlrField('DATA_PAGAMENTO'), vlrField('OBSERVACOES'));
+        salvaDadosParcela(vlrField('ID'), vlrField('CONTA'), vlrField('VALOR'), vlrField('DATA_PAGAMENTO'), vlrField('DATA_VENCIMENTO'), vlrField('OBSERVACOES'));
         QryFb.Next;
       end;
     end;
@@ -359,24 +362,8 @@ end;
 // -----------------------------------------------------------------------------
 
 procedure DBPagar.PreencheContas(Cbx: TComboBox);
-var
-  index: integer;
 begin
-
-  with Cons.FB do
-    begin
-
-      setQuery(3);
-      select('TP_DESPESA','','','', 'ID');
-
-    while QryFb.Eof = False do
-      begin
-
-        index:= vlrField('ID');
-        Cbx.Items.AddObject(vlrField('NOME'), TObject(index));
-        QryFb.Next;
-      end;
-    end;
+  Desp.despesaCombobox(Cbx);
 end;
 
 

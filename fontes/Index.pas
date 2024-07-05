@@ -23,14 +23,13 @@ uses
   LibControlGrids,
   LibTools,
   UnContasAPagar,
-  UnContasAReceber;
+  UnContasAReceber, FMX.Layouts;
 
 type
   TFrIndex = class(TForm)
     ImgBackground: TImage;
-    RctPnlMenu: TRectangle;
-    anSizeWPnlMenu: TFloatAnimation;
-    anSizeWPnlMenu1: TFloatAnimation;
+    RctPnlWorkShp: TRectangle;
+    Lyt1: TLayout;
     RctPnlLogo: TRectangle;
     ImgLogo: TImage;
     LblNomeLogo: TLabel;
@@ -38,38 +37,36 @@ type
     anVisibleLblNomeLogo: TFloatAnimation;
     anSizeHPnlLogo: TFloatAnimation;
     anSizeHPnlLogo1: TFloatAnimation;
-    RctBtCadastros: TRectangle;
-    ImgBtCadastros: TImage;
-    LblBtcadastros: TLabel;
-    anVisibleLblBtCadastros: TFloatAnimation;
-    anInvisibleLblBtCadastros: TFloatAnimation;
-    anHoverBtCadastros: TFloatAnimation;
-    anUnhoverBtCadastros: TFloatAnimation;
-    RctPnlNav: TRectangle;
-    ImgBtCloseApplication: TImage;
-    anHoverBtClose: TFloatAnimation;
-    anUnhoverBtClose: TFloatAnimation;
-    RctPnlWorkShp: TRectangle;
-    RctBtConversoes: TRectangle;
+    GdLytBotoesAcesso: TGridLayout;
+    RctBtContasAReceber: TRectangle;
     ImgBtConversoes: TImage;
     LblBtConversoes: TLabel;
-    anVisibleLblBtConversoes: TFloatAnimation;
-    anInvisibleLblBtConversoes: TFloatAnimation;
-    anHoverBtConversoes: TFloatAnimation;
-    anUnhoverBtConversoes: TFloatAnimation;
+    anHoverBtContasAReceber: TFloatAnimation;
+    anUnhoverBtContasAReceber: TFloatAnimation;
+    RctBtContasAPagar: TRectangle;
+    ImgBtCadastros: TImage;
+    LblBtcadastros: TLabel;
+    anHoverBtContasAPagar: TFloatAnimation;
+    anUnhoverBtContasAPagar: TFloatAnimation;
+    RctBtCadastroDeBancos: TRectangle;
+    ImgBtCadastroDeBancos: TImage;
+    LblBtCadastroDeBancos: TLabel;
+    anHoverBtCadastroDeBancos: TFloatAnimation;
+    anUnhoverBtCadastroDeBancos: TFloatAnimation;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; var KeyChar: Char; Shift:
         TShiftState);
-    procedure ImgBtCloseApplicationMouseLeave(Sender: TObject);
-    procedure ImgBtCloseApplicationMouseEnter(Sender: TObject);
-    procedure RctBtCadastrosMouseEnter(Sender: TObject);
-    procedure RctBtCadastrosMouseLeave(Sender: TObject);
-    procedure RctBtConversoesMouseEnter(Sender: TObject);
-    procedure RctBtConversoesMouseLeave(Sender: TObject);
-    procedure RctBtCadastrosClick(Sender: TObject);
-    procedure RctBtConversoesClick(Sender: TObject);
+    procedure RctBtContasAPagarMouseEnter(Sender: TObject);
+    procedure RctBtContasAPagarMouseLeave(Sender: TObject);
+    procedure RctBtContasAReceberMouseEnter(Sender: TObject);
+    procedure RctBtContasAReceberMouseLeave(Sender: TObject);
+    procedure RctBtContasAPagarClick(Sender: TObject);
+    procedure RctBtContasAReceberClick(Sender: TObject);
     procedure ImgBtCloseApplicationClick(Sender: TObject);
     procedure RctPnlFormClick(Sender: TObject);
+    procedure RctBtCadastroDeBancosClick(Sender: TObject);
+    procedure RctBtCadastroDeBancosMouseEnter(Sender: TObject);
+    procedure RctBtCadastroDeBancosMouseLeave(Sender: TObject);
   private
 
   public
@@ -86,57 +83,62 @@ implementation
 
 //---[BT] - (CADASTROS) ----------------------------------
 
-procedure TFrIndex.RctBtCadastrosClick(Sender: TObject);
+procedure TFrIndex.RctBtCadastroDeBancosClick(Sender: TObject);
+begin
+  //pass
+end;
+
+procedure TFrIndex.RctBtCadastroDeBancosMouseEnter(Sender: TObject);
+begin
+  anHoverBtCadastroDeBancos.Start;
+end;
+
+procedure TFrIndex.RctBtCadastroDeBancosMouseLeave(Sender: TObject);
+begin
+  anUnhoverBtCadastroDeBancos.Start;
+end;
+
+procedure TFrIndex.RctBtContasAPagarClick(Sender: TObject);
 begin
   FrContasAPagar:= TFrContasAPagar.Create(Application);
   //ActualScreen:= FrContasAPagar;
   FrContasAPagar.Show;
 end;
 
-procedure TFrIndex.RctBtCadastrosMouseEnter(Sender: TObject);
+procedure TFrIndex.RctBtContasAPagarMouseEnter(Sender: TObject);
 begin
-  anHoverBtCadastros.Start;
+  anHoverBtContasAPagar.Start;
 end;
 
-procedure TFrIndex.RctBtCadastrosMouseLeave(Sender: TObject);
+procedure TFrIndex.RctBtContasAPagarMouseLeave(Sender: TObject);
 begin
-  anUnHoverBtCadastros.Start;
+  anUnHoverBtContasAPagar.Start;
 end;
 
 //--------------------------------------------------------
 
 //---[BT] - (CONVERSÕES) ---------------------------------
 
-procedure TFrIndex.RctBtConversoesClick(Sender: TObject);
+procedure TFrIndex.RctBtContasAReceberClick(Sender: TObject);
 begin
   FrContasAReceber:= TFrContasAReceber.Create(Application);
 //  ActualScreen:= FrContasAReceber;
   FrContasAReceber.Show;
 end;
 
-procedure TFrIndex.RctBtConversoesMouseEnter(Sender: TObject);
+procedure TFrIndex.RctBtContasAReceberMouseEnter(Sender: TObject);
 begin
-  anHoverBtConversoes.Start;
+  anHoverBtContasAReceber.Start;
 end;
 
-procedure TFrIndex.RctBtConversoesMouseLeave(Sender: TObject);
+procedure TFrIndex.RctBtContasAReceberMouseLeave(Sender: TObject);
 begin
-  anUnhoverBtConversoes.Start;
+  anUnhoverBtContasAReceber.Start;
 end;
 
 //--------------------------------------------------------
 
 //---[BT] - (FECHAR APLICAÇÃO) ---------------------------
-
-procedure TFrIndex.ImgBtCloseApplicationMouseLeave(Sender: TObject);
-begin
-  anUnhoverBtClose.Start;
-end;
-
-procedure TFrIndex.ImgBtCloseApplicationMouseEnter(Sender: TObject);
-begin
-  anHoverBtClose.Start;
-end;
 
 procedure TFrIndex.ImgBtCloseApplicationClick(Sender: TObject);
 begin

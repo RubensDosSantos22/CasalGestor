@@ -43,7 +43,10 @@ uses
   FMX.Forms,
   FMX.Graphics,
   FMX.Dialogs,
-  FMX.StdCtrls, Data.DB, FireDAC.FMXUI.Wait, FireDAC.Comp.UI;
+  FMX.StdCtrls, Data.DB, FireDAC.FMXUI.Wait, FireDAC.Comp.UI,
+  FireDAC.Stan.StorageJSON,
+  Winapi.Windows, Winapi.Messages, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
 
     {$ENDREGION}
 type
@@ -57,6 +60,8 @@ type
     QrFBDelete: TFDQuery;
     Confb: TFDConnection;
     FDGUIxWaitCursor1: TFDGUIxWaitCursor;
+    QrCT_PAGAR: TFDQuery;
+    procedure DataModuleCreate(Sender: TObject);
 
     {$ENDREGION}
 
@@ -172,6 +177,13 @@ implementation
 
 {%CLASSGROUP 'FMX.Controls.TControl'}
 
+
+function GetResourceStream(const ResName: string): TStream;
+begin
+  Result := TResourceStream.Create(HInstance, ResName, RT_RCDATA);
+end;
+
+
 {$R *.dfm}
 
     {$REGION 'Verificações Conexão com a  Internet'}
@@ -195,25 +207,8 @@ begin
 end;
 
 function ConnectFBase: Boolean;
-var
-   caminho: string;
 begin
-  try
-
-  if Dm.Confb.Connected then
-    Dm.Confb.Connected:= False;
-
-    Dm.Confb.Connected:= True;
-  except
-    try
-    Dm.Confb.Connected:= False;
-    caminho:= ExtractFilePath(ParamStr(0));
-    Dm.Confb.Params.Database:= caminho + '\database\Data.FDB';
-    Dm.Confb.Connected:= True;
-    except
-      ShowMessage('Não foi possível conectar/reconectar ao banco');
-    end;
-  end;
+  //pass
 end;
     {$ENDREGION}
 
@@ -469,6 +464,65 @@ end;
 function Query.FB: TFB;
 begin
   Result:= TFB.Create;
+end;
+
+procedure TDm.DataModuleCreate(Sender: TObject);
+var
+  DataPath: string;
+  ResourceStream: TStream;
+  FileStream: TFileStream;
+  caminho: string;
+begin
+
+  caminho:= ExtractFilePath(ParamStr(0)) + 'database\';
+
+  if not DirectoryExists(caminho) then
+  begin
+    // Se não existir, criar a pasta
+    if not CreateDir(caminho) then
+    begin
+      // Se não foi possível criar a pasta, mostrar uma mensagem de erro
+      ShowMessage('Erro ao criar a pasta.');
+      Exit; // Sair da função
+    end;
+  end;
+
+  DataPath := caminho + '\Data.FDB';
+
+  // Verifica se o banco de dados já existe na pasta Data
+  if not FileExists(DataPath) then
+  begin
+    // Se não existir, copia o banco de dados dos recursos para a pasta Data
+    ResourceStream := GetResourceStream('Resource_5');
+
+    try
+      FileStream := TFileStream.Create(DataPath, fmCreate);
+      try
+        FileStream.CopyFrom(ResourceStream, ResourceStream.Size);
+      finally
+        FileStream.Free;
+      end;
+    finally
+      ResourceStream.Free;
+    end;
+  end;
+
+  try
+
+  if Dm.Confb.Connected then
+    Dm.Confb.Connected:= False;
+    Dm.Confb.Params.Database:= DataPath;
+    Dm.Confb.Connected:= True;
+  except
+    try
+    Dm.Confb.Connected:= False;
+    Dm.Confb.Params.Database:= DataPath;
+    Dm.Confb.Connected:= True;
+    except
+      ShowMessage('Não foi possível conectar/reconectar ao banco');
+    end;
+  end;
+
 end;
 
     {$ENDREGION}

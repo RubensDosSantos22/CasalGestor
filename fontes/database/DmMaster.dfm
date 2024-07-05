@@ -1,4 +1,5 @@
 object Dm: TDm
+  OnCreate = DataModuleCreate
   Height = 423
   Width = 613
   object QrFBSelect1: TFDQuery
@@ -39,6 +40,7 @@ object Dm: TDm
       'User_Name=sysdba'
       'Password=masterkey'
       'DriverID=FB')
+    Connected = True
     LoginPrompt = False
     Left = 432
     Top = 82
@@ -47,5 +49,13 @@ object Dm: TDm
     Provider = 'FMX'
     Left = 509
     Top = 82
+  end
+  object QrCT_PAGAR: TFDQuery
+    Active = True
+    Connection = Confb
+    SQL.Strings = (
+      'SELECT * FROM CT_PAGAR')
+    Left = 24
+    Top = 144
   end
 end

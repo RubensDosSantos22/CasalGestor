@@ -1,5 +1,7 @@
 program CasalGestor;
 
+{$R *.dres}
+
 uses
   System.StartUpCopy,
   FMX.Forms,
@@ -18,18 +20,15 @@ uses
   UnDBlancamentos in 'controllers\UnDBlancamentos.pas',
   UnLoading in 'UnLoading.pas' {FrLoading},
   UnInstalacao in 'UnInstalacao.pas' {Form1},
-  LibSetup in 'lib\LibSetup.pas';
+  rptContasAPagar in 'reports\rptContasAPagar.pas' {Form2};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TFrIndex, FrIndex);
-  Application.CreateForm(TFrContasAPagar, FrContasAPagar);
   Application.CreateForm(TDm, Dm);
-  Application.CreateForm(TFrmErroSistema, FrmErroSistema);
-  Application.CreateForm(TFrLoading, FrLoading);
-  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm2, Form2);
   //Application.CreateForm(TFrCadastros, FrCadastros);
   Application.Run;
 end.

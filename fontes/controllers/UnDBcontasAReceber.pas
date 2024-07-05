@@ -78,7 +78,8 @@ uses
   FMX.Layouts,
   FMX.Dialogs.Win,
 
-   DmMaster;
+   DmMaster,
+   unDbCadastros;
     {$ENDREGION}
 
 type
@@ -165,6 +166,7 @@ var
    BaseResultadoParcela                   : TList<TParcela>;
    Cons: Query;
    i: Integer;
+   Rec: Receitas;
    ic: comboItem;
 
 
@@ -327,7 +329,7 @@ begin
       end
     else
       begin
-        ShowMessage('NÃO HÁ LANÇAMENTOS PARA O PERÍODO SELECIONADO');
+        //ShowMessage('NÃO HÁ LANÇAMENTOS PARA O PERÍODO SELECIONADO');
       end;
     end;
 
@@ -359,24 +361,8 @@ end;
 // -----------------------------------------------------------------------------
 
 procedure DBReceber.PreencheContas(Cbx: TComboBox);
-var
-  index: integer;
 begin
-
-  with Cons.FB do
-    begin
-
-      setQuery(3);
-      select('TP_RECEITA','','','', 'ID');
-
-    while QryFb.Eof = False do
-      begin
-
-        index:= vlrField('ID');
-        Cbx.Items.AddObject(vlrField('NOME'), TObject(index));
-        QryFb.Next;
-      end;
-    end;
+  Rec.receitaCombobox(Cbx);
 end;
 
 

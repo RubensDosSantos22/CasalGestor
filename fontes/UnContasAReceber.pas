@@ -41,7 +41,8 @@ uses
   LibControlGrids,
   UnDBcontasAReceber,
   UnFrmItensContas,
-  UnControleErros;
+  UnControleErros,
+  UnDBcadastros;
 
     {$ENDREGION}
 
@@ -63,57 +64,120 @@ type
 
     {$REGION 'Declaração dos compoenntes da tela'}
     ImgBackground: TImage;
-    RctPnlNav: TRectangle;
-    ImgBtCloseApplication: TImage;
-    anHoverBtClose: TFloatAnimation;
-    anUnhoverBtClose: TFloatAnimation;
+    RctPnlTituloTela: TRectangle;
+    LytTituloTela: TLayout;
     LblTituloTela: TLabel;
-    RctPnlWorkShp: TRectangle;
-    TbWork: TTabControl;
-    TbItLancamento: TTabItem;
-    GpParcelasReceber: TGroupBox;
-    RctDadosParcela: TRectangle;
-    RctValorParcela: TRectangle;
-    EdtValorParcela: TEdit;
-    LblValorParcela: TLabel;
-    RctBotoesLancaParcela: TRectangle;
-    SpBtAdicionarParcela: TSpeedButton;
-    ImgBtParcelas: TImage;
-    LblBtParcelas: TLabel;
-    GpLancamentoParcela: TGroupBox;
-    DeLancamentoParcela: TDateEdit;
-    LstBxParcelasAPagar: TListBox;
-    RctWork: TRectangle;
-    RctPnlNavLancarServico: TRectangle;
+    ImgIconeTela: TImage;
+    SpBtAjuda: TSpeedButton;
+    ImgBtAjuda: TImage;
+    GdLytNavBotoesTela: TGridLayout;
+    RctBtNovo: TRectangle;
     SpBtNovo: TSpeedButton;
     ImgBtNovo: TImage;
     LblBtNovo: TLabel;
-    SpBtEditar: TSpeedButton;
-    LblBtEditar: TLabel;
-    ImgBtEditar: TImage;
-    SpBtDeletar: TSpeedButton;
-    LblBtDeletar: TLabel;
-    ImgBtDeletar: TImage;
+    RctBtCancelar: TRectangle;
     SpBtCancelar: TSpeedButton;
     ImgBtCancelar: TImage;
     LblBtCancelar: TLabel;
-    RctWorkSpace: TRectangle;
-    GpDatasLancamento: TGroupBox;
-    DePagamento: TDateEdit;
+    RctBtSalvar: TRectangle;
+    SpBtSalvarRegistro: TSpeedButton;
+    ImgBtSalvar: TImage;
+    LblBtSalvar: TLabel;
+    RctBtEditar: TRectangle;
+    SpBtEditar: TSpeedButton;
+    LblBtEditar: TLabel;
+    ImgBtEditar: TImage;
+    RctBtDeletar: TRectangle;
+    SpBtDeletar: TSpeedButton;
+    LblBtDeletar: TLabel;
+    ImgBtDeletar: TImage;
+    RctPnlWorkShp: TRectangle;
+    TbWork: TTabControl;
+    TbItLancamento: TTabItem;
+    RctLancarConta: TRectangle;
+    RctDadosConta: TRectangle;
+    LytNomeConta: TLayout;
+    LblNomeConta: TLabel;
+    EdtCodigoConta: TEdit;
+    EdtNomeConta: TEdit;
+    LytDatas: TLayout;
     LblDataPagamento: TLabel;
+    DePagamento: TDateEdit;
     LblDataVencimento: TLabel;
     DeVencimento: TDateEdit;
-    GdLytNomeConta: TGridLayout;
-    LblNomeConta: TLabel;
-    EdtNomeConta: TEdit;
-    GdLytInformacoesBase: TGridLayout;
+    LytInformacoesPrincipais: TLayout;
     LblTipoConta: TLabel;
     CbTiposDeContas: TComboBox;
-    LblValorConta: TLabel;
     EdtValorDaConta: TEdit;
-    LblDicasAtalhosLancamentos: TLabel;
+    LblValorConta: TLabel;
+    LytRodapeLancamento: TLayout;
+    RctBtAbaParcelas: TRectangle;
+    SpBtAbaParcelas: TSpeedButton;
+    ImgBtAbaParcelasL: TImage;
+    LblBtAbaParcelas: TLabel;
+    ImgBtAbaParcelasR: TImage;
+    LytLancamento: TLayout;
+    LblLancamento: TLabel;
+    ImgLancamento: TImage;
+    RctBtConsultar_0: TRectangle;
+    SpBtConsultar_0: TSpeedButton;
+    ImgBtConsultar_0L: TImage;
+    LblConsultar_0: TLabel;
+    ImgBtConsultar_0R: TImage;
+    TbItParcelas: TTabItem;
+    RctLancarParcela: TRectangle;
+    RctDadosDaParcela: TRectangle;
+    LytLancarUmaParcela: TLayout;
+    LblPagamentoParcela: TLabel;
+    DePagamentoParcela: TDateEdit;
+    DeVencimentoParcela: TDateEdit;
+    LblVencimentoParcela: TLabel;
+    EdtValorParcela: TEdit;
+    LblValorParcela: TLabel;
+    RctBtAdicionarParcela: TRectangle;
+    SpBtAdicionarParcela: TSpeedButton;
+    ImgBtParcelas: TImage;
+    LblBtParcelas: TLabel;
+    LytLancarVariasParcelas: TLayout;
+    LytVisualizaParcelas: TLayout;
+    LstBxParcelasAPagar: TListBox;
+    LblParcelasAPagar: TLabel;
+    LblParcelasPagas: TLabel;
+    LytDadosParcelas: TLayout;
+    LblVariasParcelas: TLabel;
+    RctBarraDivisora1: TRectangle;
+    LytGeracao: TLayout;
+    EdtQtdParcelas: TEdit;
+    LblQtdParcelas: TLabel;
+    SpBtGerarParcelas: TSpeedButton;
+    Img16: TImage;
+    LytVencimentoEmDiasCorridos: TLayout;
+    CbVencimentoEmDias: TCheckBox;
+    EdtVencimentoEmDiasParcelas: TEdit;
+    LblVencimentoEmDias: TLabel;
+    DeVencimentoEmDias: TDateEdit;
+    LytParcelamentoPorDiaFIxo: TLayout;
+    CbVencimentoDiaFixo: TCheckBox;
+    DeVencimentoDiaFixoParcela: TDateEdit;
+    LblVencimentoDiaFixo: TLabel;
+    EdtVencimentoDiaFixoMes: TEdit;
+    LytRodapeParcela: TLayout;
+    RctBtAbaDadosDaConta: TRectangle;
+    SpBtAbaDadosDaConta: TSpeedButton;
+    ImgBtAbaDadosDaContaL: TImage;
+    LblBtAbaDadosDaConta: TLabel;
+    ImgBtAbaDadosDaContaR: TImage;
+    LytParcelas: TLayout;
+    LblParcelas: TLabel;
+    ImgParcelas: TImage;
+    RctBtConsultar_1: TRectangle;
+    SpBtConsultar_1: TSpeedButton;
+    ImgBtConsultar_1L: TImage;
+    LblBtConsultar_1: TLabel;
+    ImgBtConsultar_1R: TImage;
     TbItConsulta: TTabItem;
     RctConsulta: TRectangle;
+    LstBxConsulta: TListBox;
     RctFiltrosConsulta: TRectangle;
     LblTTAPagar: TLabel;
     LblTTPagas: TLabel;
@@ -124,8 +188,14 @@ type
     DeFimConsulta: TDateEdit;
     RbTipoPagamento: TRadioButton;
     RbTipoVencimento: TRadioButton;
-    LblDicasAtalhosPesquisa: TLabel;
-    LstBxConsulta: TListBox;
+    LytConsultar: TLayout;
+    LblConsultar: TLabel;
+    ImgIconeConsultar: TImage;
+    RctBtConsultar: TRectangle;
+    SpBtConsultar_2: TSpeedButton;
+    ImgBtConsultar_2: TImage;
+    LblBtConsultar_2: TLabel;
+    Lbl1: TLabel;
 
     {$ENDREGION}
 
@@ -144,8 +214,6 @@ type
     procedure FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char; Shift:
         TShiftState);
     procedure ImgBtCloseApplicationClick(Sender: TObject);
-    procedure ImgBtCloseApplicationMouseEnter(Sender: TObject);
-    procedure ImgBtCloseApplicationMouseLeave(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure SpBtAdicionarParcelaClick(Sender: TObject);
     procedure SpBtCancelarClick(Sender: TObject);
@@ -153,15 +221,21 @@ type
     procedure SpBtEditarClick(Sender: TObject);
     procedure SpBtNovoClick(Sender: TObject);
     procedure DeFimConsultaExit(Sender: TObject);
-    procedure CbTiposDeContasChange(Sender: TObject);
+    procedure CbTiposDeContasExit(Sender: TObject);
     procedure DeInicioConsultaExit(Sender: TObject);
     procedure EdtValorDaContaExit(Sender: TObject);
     procedure EdtValorParcelaExit(Sender: TObject);
     procedure RbTipoPagamentoChange(Sender: TObject);
     procedure RbTipoVencimentoChange(Sender: TObject);
+    procedure SpBtAbaDadosDaContaClick(Sender: TObject);
+    procedure SpBtAbaParcelasClick(Sender: TObject);
+    procedure SpBtConsultar_0Click(Sender: TObject);
+    procedure SpBtConsultar_1Click(Sender: TObject);
+    procedure SpBtConsultar_2Click(Sender: TObject);
+    procedure SpBtSalvarRegistroClick(Sender: TObject);
 
   private
-    Parcela: ItemGrids;
+    Parcela: TItemGrids;
     Botoes: Navbar;
     TipodatConsulta, chaveRegistroEdicao: Integer;
   public
@@ -199,9 +273,10 @@ begin
       CbTiposDeContas.ItemIndex:= -1;
       EdtValorDaConta.Text:= '0,00';
       EdtValorParcela.Text:= '0,00';
-      DePagamento.Date:= Now;
+      DePagamento.Date:= StrToDate('01/01/2000');
       DeVencimento.Date:= Now;
-      DeLancamentoParcela.Date:= now;
+      DePagamentoParcela.Date:= StrToDate('01/01/2000');
+      DeVencimentoParcela.Date:= Now;
       EdtNomeConta.Text:= '';
       LstBxParcelasAPagar.Clear;
     end;
@@ -250,9 +325,10 @@ begin
         Parcela.addConta(
                          LstBxConsulta,
                          BaseResultadoConta[i].CodigoConta,
-                         FormatFloat('###,###,##0.00', BaseResultadoConta[i].Valor),
+                         BaseResultadoConta[i].Valor,
                          DateToStr(BaseResultadoConta[i].Vencimento),
                          DateToStr(BaseResultadoConta[i].Recebimento),
+                         Inttostr(BaseResultadoConta[i].IdTabela),
                          BaseResultadoConta[i].Id);
 
       if DateToStr(BaseResultadoConta[i].Recebimento) <> '01/01/2000' then
@@ -289,12 +365,13 @@ begin
       SpBtEditar.Enabled          := state;
       SpBtNovo.Enabled            := state;
       SpBtCancelar.Enabled        := not state;
-      RctWorkSpace.Enabled        := not state;
-//      GpParcelasReceber.Enabled   := not state;
+      SpBtSalvarRegistro.Enabled  := not state;
+      RctLancarParcela.Enabled    := not state;
+      RctLancarConta.Enabled      := not state;
       Lanca_Parcela               := not state;
 
     if state then
-      TbWork.TabIndex             := 1
+      TbWork.TabIndex             := 2
     else
       TbWork.TabIndex             := 0
     end;
@@ -306,9 +383,10 @@ end;
 
 {$REGION 'Ações de Edits'}
 
-procedure TFrContasAReceber.CbTiposDeContasChange(Sender: TObject);
+procedure TFrContasAReceber.CbTiposDeContasExit(Sender: TObject);
 begin
-  //EdtNomeConta.Text:= '';
+  if CbTiposDeContas.ItemIndex <> -1 then
+    EdtCodigoConta.Text:= comboItemReceita(CbTiposDeContas.Selected).CdReceita;
 end;
 
 procedure TFrContasAReceber.DeFimConsultaExit(Sender: TObject);
@@ -326,7 +404,6 @@ begin
   if (EdtValorDaConta.Text = '') then
      EdtValorDaConta.Text:= '0,00';
 end;
-
 
 procedure TFrContasAReceber.EdtValorDaContaKeyDown(Sender: TObject; var Key:
     Word; var KeyChar: Char; Shift: TShiftState);
@@ -411,10 +488,12 @@ end;
 
 procedure TFrContasAReceber.FormShow(Sender: TObject);
 begin
-  RctWorkSpace.Enabled                     := False;
-//  GpParcelasReceber.Enabled                := False;
+  RctLancarParcela.Enabled                 := False;
+  RctLancarConta.Enabled                   := False;
   Permite_Alteracao                        := True;
-  TbWork.TabIndex                          := 1;
+  TbWork.TabIndex                          := 2;
+  stp                                      := 'RCB';
+  configuraTela(True);
   Limparcampos;
   AbreConsulta;
   Base.PreencheContas(CbTiposDeContas);
@@ -436,16 +515,6 @@ begin
   FrContasAReceber.Close;
 end;
 
-procedure TFrContasAReceber.ImgBtCloseApplicationMouseEnter(Sender: TObject);
-begin
-  anHoverBtClose.Start;
-end;
-
-procedure TFrContasAReceber.ImgBtCloseApplicationMouseLeave(Sender: TObject);
-begin
-  anUnhoverBtClose.Start;
-end;
-
 procedure TFrContasAReceber.RbTipoPagamentoChange(Sender: TObject);
 begin
   ConsultarContas;
@@ -456,6 +525,16 @@ begin
   ConsultarContas;
 end;
 
+procedure TFrContasAReceber.SpBtAbaDadosDaContaClick(Sender: TObject);
+begin
+  TbWork.TabIndex:= 0;
+end;
+
+procedure TFrContasAReceber.SpBtAbaParcelasClick(Sender: TObject);
+begin
+  TbWork.TabIndex:= 1;
+end;
+
 procedure TFrContasAReceber.SpBtAdicionarParcelaClick(Sender: TObject);
 begin
   Botoes.Salvar('P');
@@ -464,6 +543,21 @@ end;
 procedure TFrContasAReceber.SpBtCancelarClick(Sender: TObject);
 begin
   Botoes.Cancelar;
+end;
+
+procedure TFrContasAReceber.SpBtConsultar_0Click(Sender: TObject);
+begin
+  Botoes.Pesquisar;
+end;
+
+procedure TFrContasAReceber.SpBtConsultar_1Click(Sender: TObject);
+begin
+  Botoes.Pesquisar;
+end;
+
+procedure TFrContasAReceber.SpBtConsultar_2Click(Sender: TObject);
+begin
+  Botoes.Pesquisar;
 end;
 
 procedure TFrContasAReceber.SpBtDeletarClick(Sender: TObject);
@@ -479,6 +573,11 @@ end;
 procedure TFrContasAReceber.SpBtNovoClick(Sender: TObject);
 begin
   Botoes.Adicionar;
+end;
+
+procedure TFrContasAReceber.SpBtSalvarRegistroClick(Sender: TObject);
+begin
+  Botoes.Salvar('R');
 end;
 
 {$ENDREGION}
@@ -517,12 +616,14 @@ begin
 
       chave := itemConsultaPagar;
 
-      CbTiposDeContas.ItemIndex  := BaseResultadoConta[chave].Receita;
+      Rec.receToCbxItem(CbTiposDeContas, BaseResultadoConta[chave].Receita);
       EdtValorDaConta.Text       := FormatFloat(formatoValor, BaseResultadoConta[chave].Valor);
       DePagamento.Date           := BaseResultadoConta[chave].Recebimento;
       DeVencimento.Date          := BaseResultadoConta[chave].Vencimento;
-      EdtNomeConta.Text          := BaseResultadoConta[chave].CodigoConta;
       chaveRegistroEdicao        := BaseResultadoConta[chave].IdTabela;
+
+      EdtCodigoConta.Text        := Copy(BaseResultadoConta[chave].CodigoConta, 0, length(comboItemReceita(CbTiposDeContas.Selected).CdReceita));
+      EdtNomeConta.Text          := Copy(BaseResultadoConta[chave].CodigoConta, length(comboItemReceita(CbTiposDeContas.Selected).CdReceita) + 4, length(BaseResultadoConta[chave].CodigoConta) - length(comboItemReceita(CbTiposDeContas.Selected).CdReceita) - 4);
 
       LstBxParcelasAPagar.Clear;
     end;
@@ -561,23 +662,40 @@ begin
   with FrContasAReceber do
     begin
 
-    if Permite_Alteracao = False then
+    if TbWork.TabIndex <> 2 then
       begin
-
-      if A.mensagemAlerta('', 'Certeza? Sua operação atual será cancelada', 1) = True then
+      if Permite_Alteracao = False then
         begin
-          LstBxConsulta.Clear;
-          Cancelar;
+
+        if A.mensagemAlerta('', 'Certeza? Sua operação atual será cancelada', 1) = True then
+          begin
+            TbWork.TabIndex:= 2;
+            LstBxConsulta.Clear;
+            Cancelar;
+          end
+        else
+          begin
+            Permite_Alteracao                   := True;
+          end;
         end
       else
         begin
-          Permite_Alteracao                   := True;
+          TbWork.TabIndex:= 2;
+          ConsultarContas;
+          configuraTela(True);
         end;
+      end
+    else
+      begin
+        ConsultarContas;
+        configuraTela(True);
       end;
     end;
 end;
 
 procedure navBar.Salvar(tp: string);
+var
+   conta: string;
 begin
   with FrContasAReceber do
     begin
@@ -590,7 +708,7 @@ begin
 
         if (StrToFloat(EdtValorParcela.Text) <> 0) and (EdtNomeConta.Text <> '') then
           begin
-            Parcela.addParcela(LstBxParcelasAPagar, EdtNomeConta.Text, DeLancamentoParcela.Text, EdtValorParcela.Text);
+            //Parcela.addParcela(LstBxParcelasAPagar, EdtNomeConta.Text, DePagamentoParcela.Text, DeVencimentoParcela.Text, EdtValorParcela.Text);
             EdtValorParcela.Text:= '0,00';
           end
         else
@@ -613,13 +731,15 @@ begin
     else if Permite_Alteracao = False then
       begin
 
+        conta:= EdtCodigoConta.Text + ' ( ' + EdtNomeConta.Text + ' )';
+
       if A.mensagemAlerta('', 'Confirma Salvamento?', 1) = True then
         begin
 
         if NovoOuEdita = 'N' then
-          Base.SalvaConta(EdtNomeConta.Text, StrToFloat(EdtValorDaConta.Text), DePagamento.Date, DeVencimento.Date, integer(CbTiposDeContas.Items.Objects[CbTiposDeContas.ItemIndex]), '')
+          Base.SalvaConta(conta, StrToFloat(EdtValorDaConta.Text), DePagamento.Date, DeVencimento.Date, comboItemReceita(CbTiposDeContas.Selected).Id, '')
         else
-          Base.SalvaConta(EdtNomeConta.Text, StrToFloat(EdtValorDaConta.Text), DePagamento.Date, DeVencimento.Date, integer(CbTiposDeContas.Items.Objects[CbTiposDeContas.ItemIndex]), '', BaseResultadoConta[itemConsultaPagar].IdTabela);
+          Base.SalvaConta(conta, StrToFloat(EdtValorDaConta.Text), DePagamento.Date, DeVencimento.Date, comboItemReceita(CbTiposDeContas.Selected).Id, '', BaseResultadoConta[itemConsultaPagar].IdTabela);
 
           configuraTela(True);
           LstBxConsulta.Clear;
